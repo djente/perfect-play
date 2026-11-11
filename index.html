@@ -1,0 +1,3887 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Perfect Play</title>
+  <meta name="description" content="Learn perfect blackjack basic strategy: lessons, drills, a coached table and card counting practice.">
+  <meta name="theme-color" content="#17191c">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314b57b'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='30' font-weight='800' text-anchor='middle' fill='%2306281b'%3E21%3C/text%3E%3C/svg%3E">
+  <!-- pwa:start -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Perfect Play">
+  <!-- pwa:end -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #17191c;
+  --bg-2: #1d2024;
+  --panel: #23272c;
+  --panel-2: #2b3036;
+  --panel-3: #333941;
+  --line: #3a4048;
+  --line-soft: #2e343a;
+  --text: #eef1f3;
+  --muted: #9aa4ad;
+  --dim: #6c757e;
+
+  --green: #14b57b;
+  --green-2: #0e9464;
+  --teal: #38c4bd;
+  --yellow: #f2c418;
+  --red: #ff6464;
+  --rose: #e36f7b;
+  --gold: #e9c56b;
+  --cell-white: #f3f5f6;
+  --cell-ink: #1b1f23;
+
+  --felt: #0f5c40;
+  --felt-dark: #083826;
+  --felt-line: rgba(255, 255, 255, 0.12);
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --cw: 74px;
+  --font: 'Outfit', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image: radial-gradient(1200px 600px at 80% -10%, rgba(20, 181, 123, 0.07), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(56, 196, 189, 0.05), transparent 60%);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+button { font: inherit; color: inherit; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+a { -webkit-tap-highlight-color: transparent; }
+@media (min-width: 641px) { .mobile-only { display: none !important; } }
+a { color: inherit; }
+h1, h2, h3, h4 { margin: 0; line-height: 1.15; letter-spacing: -0.01em; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.dim { color: var(--dim); }
+.mono { font-family: var(--mono); }
+.hidden { display: none !important; }
+kbd {
+  font-family: var(--mono);
+  font-size: 0.7em;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid currentColor;
+  opacity: 0.55;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 24px;
+  height: 62px;
+  background: rgba(23, 25, 28, 0.86);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--green);
+  color: #06281b;
+  font-weight: 800;
+  font-size: 15px;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18);
+}
+.brand small { display: block; font-weight: 500; color: var(--muted); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; margin-top: -3px; }
+.tabs { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a {
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 15px;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.tabs a:hover { color: var(--text); background: var(--panel); }
+.tabs a.active { color: #06281b; background: var(--green); font-weight: 600; }
+.tabs .ico { display: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+main { max-width: 1140px; margin: 0 auto; padding: 28px 20px 80px; }
+.view { display: none; animation: viewIn 0.25s ease; }
+.view.active { display: block; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Generic ---------- */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+.page-head h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 700; }
+.page-head p { color: var(--muted); margin-top: 6px; max-width: 62ch; }
+.eyebrow { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); font-weight: 600; margin-bottom: 8px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.08s, background 0.15s, border-color 0.15s, opacity 0.15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--panel-3); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn.primary { background: var(--green); border-color: var(--green); color: #052a1c; }
+.btn.primary:hover { background: #19c78a; }
+.btn.ghost { background: transparent; }
+.btn.sm { padding: 6px 12px; font-size: 14px; }
+.btn.lg { padding: 14px 26px; font-size: 17px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.chip:hover { color: var(--text); border-color: var(--dim); }
+.chip.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+.toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); cursor: pointer; user-select: none; }
+.toggle input { appearance: none; width: 34px; height: 20px; border-radius: 999px; background: var(--panel-3); position: relative; cursor: pointer; transition: background 0.15s; margin: 0; flex: none; }
+.toggle input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--muted); transition: all 0.15s; }
+.toggle input:checked { background: var(--green); }
+.toggle input:checked::after { left: 17px; background: #fff; }
+
+.seg { display: inline-flex; background: var(--bg-2); border: 1px solid var(--line-soft); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: transparent; color: var(--muted); padding: 6px 12px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 500; }
+.seg button.on { background: var(--panel-3); color: var(--text); }
+
+/* ---------- Cards ---------- */
+.card {
+  width: var(--cw);
+  height: calc(var(--cw) * 1.4);
+  flex: none;
+  position: relative;
+  border-radius: calc(var(--cw) * 0.1);
+  background: linear-gradient(160deg, #ffffff, #f1efe9);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 6px 14px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.3);
+  color: #1c1f22;
+  user-select: none;
+}
+.card.red { color: #cf2a3b; }
+.card .corner {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.95;
+  font-size: calc(var(--cw) * 0.24);
+}
+.card .corner b { font-weight: 700; letter-spacing: -0.04em; }
+.card .corner i { font-style: normal; font-size: 0.8em; }
+.card .tl { top: 6%; left: 9%; }
+.card .br { bottom: 6%; right: 9%; transform: rotate(180deg); }
+.card .pip { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--cw) * 0.5); }
+.card .pip.ace { font-size: calc(var(--cw) * 0.62); }
+.card .pip.face {
+  inset: 22% 22%;
+  border: 1.5px solid currentColor;
+  border-radius: 5px;
+  opacity: 0.9;
+  font-weight: 800;
+  font-size: calc(var(--cw) * 0.34);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(0, 0, 0, 0.035) 4px 5px);
+}
+.card .pip.face small { font-size: 0.55em; margin-top: 2px; }
+.card.back {
+  background: #8f1d2c;
+  background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.09) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.09) 0 2px, transparent 2px 9px);
+  border: calc(var(--cw) * 0.06) solid #f4f1ea;
+}
+.hand { display: flex; align-items: flex-start; min-height: calc(var(--cw) * 1.4); }
+.hand .card + .card { margin-left: calc(var(--cw) * -0.5); }
+.hand.spread .card + .card { margin-left: 8px; }
+.deal-in { animation: dealIn 0.32s cubic-bezier(0.2, 0.8, 0.25, 1) both; }
+@keyframes dealIn {
+  from { opacity: 0; transform: translate(40px, -70px) rotate(10deg) scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+.flip-in { animation: flipIn 0.38s ease both; }
+@keyframes flipIn { 0% { transform: rotateY(90deg); } 100% { transform: rotateY(0); } }
+
+/* ---------- Felt ---------- */
+.felt {
+  position: relative;
+  border-radius: 22px;
+  background: radial-gradient(130% 90% at 50% 0%, #17784f 0%, var(--felt) 45%, var(--felt-dark) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 -40px 80px rgba(0, 0, 0, 0.25), var(--shadow);
+  padding: 24px;
+  overflow: hidden;
+}
+.felt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 4px 4px;
+  pointer-events: none;
+}
+.felt > * { position: relative; }
+.seat { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.seat-label { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255, 0.6); font-weight: 600; }
+.total-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-weight: 600;
+  font-size: 15px;
+  min-height: 28px;
+}
+.total-badge.soft { border-color: rgba(56, 196, 189, 0.6); }
+.total-badge.bust { background: rgba(255, 100, 100, 0.2); border-color: rgba(255, 100, 100, 0.6); }
+.total-badge.bj { background: rgba(233, 197, 107, 0.22); border-color: var(--gold); color: var(--gold); }
+
+/* ---------- Actions ---------- */
+.actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.act {
+  border: 0;
+  border-radius: 14px;
+  padding: 14px 8px 12px;
+  font-weight: 700;
+  font-size: 17px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 0.08s, filter 0.15s, opacity 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.act small { font-family: var(--mono); font-size: 11px; font-weight: 500; opacity: 0.6; }
+.act:hover:not(:disabled) { filter: brightness(1.07); }
+.act:active:not(:disabled) { transform: translateY(2px); box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2); }
+.act:disabled { opacity: 0.22; cursor: not-allowed; filter: grayscale(0.6); }
+.act-H { background: var(--cell-white); color: var(--cell-ink); }
+.act-S { background: var(--yellow); color: #3a2c00; }
+.act-D { background: var(--green); color: #032117; }
+.act-P { background: var(--teal); color: #032523; }
+.act-R { background: var(--rose); color: #2f0a0f; }
+.act.hint { outline: 3px solid #fff; outline-offset: 3px; animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { outline-color: rgba(255, 255, 255, 0.25); } }
+.act.was-wrong { outline: 3px solid var(--red); outline-offset: 3px; }
+.act.was-right { outline: 3px solid #fff; outline-offset: 3px; }
+
+/* ---------- Trainer ---------- */
+.trainer { display: grid; gap: 16px; }
+.trainer-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.stat-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.stat-pill {
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 14px;
+  color: var(--muted);
+  display: inline-flex;
+  gap: 6px;
+  align-items: baseline;
+}
+.stat-pill b { color: var(--text); font-size: 16px; font-variant-numeric: tabular-nums; }
+.stat-pill.fire b { color: var(--yellow); }
+.progress { height: 6px; border-radius: 999px; background: var(--panel-2); overflow: hidden; }
+.progress > span { display: block; height: 100%; background: var(--green); border-radius: inherit; transition: width 0.3s; }
+.timer-bar > span { background: var(--yellow); transition: width 0.25s linear; }
+
+.trainer .felt { --cw: 92px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; min-height: 270px; padding: 28px 24px; }
+.trainer .felt .vs {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.35);
+}
+.ctx-note {
+  grid-column: 1 / -1;
+  justify-self: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 999px;
+  padding: 4px 12px;
+  text-align: center;
+}
+.flash-good { animation: flashGood 0.5s ease; }
+.flash-bad { animation: flashBad 0.5s ease; }
+@keyframes flashGood { 30% { box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.7), var(--shadow); } }
+@keyframes flashBad { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+.feedback {
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-left: 5px solid var(--green);
+  display: grid;
+  gap: 12px;
+  animation: viewIn 0.2s ease;
+}
+.feedback.bad { border-left-color: var(--red); }
+.fb-head { display: flex; gap: 12px; align-items: center; }
+.fb-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 18px;
+  background: var(--green);
+  color: #052a1c;
+  flex: none;
+}
+.feedback.bad .fb-icon { background: var(--red); color: #2c0606; }
+.fb-title { font-weight: 700; font-size: 18px; }
+.fb-sub { color: var(--muted); font-size: 14px; }
+.fb-why { color: #d6dbe0; max-width: 75ch; }
+.fb-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* ---------- Strategy chart tables ---------- */
+.chart-table { border-collapse: separate; border-spacing: 2px; width: 100%; font-weight: 600; font-size: 13px; table-layout: fixed; }
+.chart-table th, .chart-table td { text-align: center; padding: 0; height: 28px; border-radius: 4px; }
+.chart-table thead th { color: var(--muted); font-weight: 600; background: var(--panel-2); }
+.chart-table tbody th { color: var(--text); background: var(--panel-2); width: 56px; font-weight: 600; }
+.chart-table thead th:first-child { width: 56px; background: transparent; }
+.c-Y, .c-D, .c-SUR { background: var(--green); color: #04261a; }
+.c-YN, .c-Ds { background: var(--teal); color: #042826; }
+.c-S { background: var(--yellow); color: #3a2c00; }
+.c-H, .c-N { background: var(--cell-white); color: var(--cell-ink); }
+.c-blank { background: var(--panel-2); }
+.chart-table td.hl { outline: 3px solid #fff; outline-offset: -1px; position: relative; z-index: 1; box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.45); }
+.chart-table th.hl-col, .chart-table th.hl-row { background: var(--text); color: var(--bg); }
+.chart-table.clickable td { cursor: pointer; transition: transform 0.08s, filter 0.1s; }
+.chart-table.clickable td:hover { filter: brightness(0.92); transform: scale(1.06); }
+.chart-table.heat td { color: #fff; font-size: 11px; }
+.chart-table.heat td.h-none { background: var(--panel-2); color: var(--dim); }
+.mini-chart { overflow-x: auto; }
+.mini-chart .chart-table { min-width: 420px; }
+.side .mini-chart .chart-table { min-width: 0; font-size: 10px; border-spacing: 1px; }
+.side .mini-chart .chart-table tbody th, .side .mini-chart .chart-table thead th:first-child { width: 30px; }
+.side .mini-chart .chart-table th, .side .mini-chart .chart-table td { height: 22px; }
+.chart-block { display: grid; gap: 8px; }
+.chart-block h3 {
+  text-align: center;
+  background: var(--panel-3);
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.chart-key { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+.chart-key span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-key i { font-style: normal; min-width: 30px; text-align: center; border-radius: 4px; padding: 1px 6px; font-weight: 700; font-size: 12px; }
+
+/* ---------- Learn ---------- */
+.learn-hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 26px; }
+.hero-card {
+  background: linear-gradient(135deg, #1b5d43, #123a2b);
+  border-radius: 20px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.hero-card h1 { font-size: clamp(28px, 4.2vw, 42px); font-weight: 800; max-width: 16ch; }
+.hero-card p { color: rgba(255, 255, 255, 0.78); margin: 12px 0 20px; max-width: 46ch; }
+.hero-cards { position: absolute; right: -10px; bottom: -24px; display: flex; --cw: 84px; transform: rotate(-12deg); opacity: 0.95; }
+.hero-cards .card + .card { margin-left: -40px; transform: rotate(9deg) translateY(-8px); }
+.hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.kpi { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; justify-content: space-between; gap: 4px; }
+.kpi .k { font-size: 13px; color: var(--muted); }
+.kpi .v { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.kpi .v small { font-size: 15px; color: var(--muted); font-weight: 500; }
+
+.levels { display: grid; gap: 12px; }
+.level {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  padding: 16px 18px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, transform 0.12s, background 0.15s;
+  width: 100%;
+}
+.level:hover { border-color: var(--line); background: var(--panel-2); transform: translateX(3px); }
+.level-num {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 20px;
+  background: var(--panel-3);
+  color: var(--muted);
+}
+.level.passed .level-num { background: var(--green); color: #052a1c; }
+.level.next .level-num { background: var(--text); color: var(--bg); }
+.level h3 { font-size: 18px; font-weight: 600; }
+.level p { color: var(--muted); font-size: 14px; margin-top: 2px; }
+.stars { display: flex; gap: 2px; font-size: 18px; color: var(--panel-3); letter-spacing: 1px; }
+.stars .on { color: var(--yellow); }
+.level-tag { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; margin-left: 8px; font-weight: 500; vertical-align: middle; }
+
+.lesson-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; flex-wrap: wrap; }
+.lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-bottom: 22px; }
+.lesson-card { background: var(--panel); border: 1px solid var(--line-soft); border-radius: 16px; padding: 18px 20px; display: grid; gap: 8px; align-content: start; }
+.lesson-card h3 { font-size: 17px; font-weight: 700; display: flex; gap: 10px; align-items: center; }
+.lesson-card h3 .ico { width: 28px; height: 28px; border-radius: 8px; background: var(--panel-3); display: grid; place-items: center; font-size: 14px; flex: none; }
+.lesson-card p, .lesson-card li { color: #cdd3d9; font-size: 15px; }
+.lesson-card ul, .lesson-card ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.lesson-card.wide { grid-column: 1 / -1; }
+.lesson-card.tip { border-color: rgba(242, 196, 24, 0.35); background: linear-gradient(180deg, rgba(242, 196, 24, 0.06), transparent); }
+.lesson-card.tip h3 .ico { background: var(--yellow); color: #3a2c00; }
+.lesson-card .mini-hand { display: flex; gap: 6px; --cw: 40px; margin: 4px 0; flex-wrap: wrap; align-items: center; }
+.lesson-card .mini-hand .eq { color: var(--muted); font-weight: 600; margin: 0 6px; font-size: 14px; }
+.hl-g { color: var(--green); font-weight: 600; }
+.hl-y { color: var(--yellow); font-weight: 600; }
+.hl-r { color: var(--rose); font-weight: 600; }
+.hl-t { color: var(--teal); font-weight: 600; }
+
+.bust-bars { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; align-items: end; height: 150px; margin-top: 6px; }
+.bust-bars .bar { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; }
+.bust-bars .bar span { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bust-bars .bar i { display: block; width: 100%; border-radius: 6px 6px 2px 2px; background: var(--green); min-height: 4px; }
+.bust-bars .bar.strong i { background: var(--panel-3); }
+.bust-bars .bar b { font-size: 13px; }
+
+.result-card { text-align: center; padding: 36px 24px; display: grid; gap: 14px; justify-items: center; }
+.result-card .big { font-size: 64px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+.result-card .stars { font-size: 40px; gap: 8px; }
+.miss-list { display: grid; gap: 8px; width: 100%; max-width: 640px; text-align: left; }
+.miss {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  background: var(--bg-2);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+.miss .mini-hand { display: flex; gap: 3px; --cw: 28px; }
+.miss .mini-hand .card + .card { margin-left: -12px; }
+.miss .tag { font-weight: 700; padding: 2px 10px; border-radius: 999px; font-size: 13px; }
+
+/* totals quiz */
+.choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.choice { border: 1px solid var(--line); background: var(--panel-2); border-radius: 12px; padding: 14px; font-weight: 600; font-size: 17px; cursor: pointer; transition: all 0.12s; }
+.choice:hover:not(:disabled) { border-color: var(--text); }
+.choice.right { background: var(--green); color: #052a1c; border-color: var(--green); }
+.choice.wrong { background: var(--red); color: #2c0606; border-color: var(--red); }
+
+/* ---------- Table ---------- */
+.table-layout { display: grid; grid-template-columns: 1fr 320px; gap: 18px; align-items: start; }
+.table-felt { min-height: 520px; display: grid; grid-template-rows: auto 1fr auto; gap: 14px; padding: 22px 24px 26px; }
+.table-top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 12px; }
+.shoe-meter { font-size: 12px; color: rgba(255, 255, 255, 0.7); display: grid; gap: 4px; min-width: 130px; }
+.shoe-meter .progress { background: rgba(0, 0, 0, 0.3); height: 5px; }
+.shoe-meter .progress > span { background: rgba(255, 255, 255, 0.8); }
+.felt-rules {
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  border-top: 1px solid var(--felt-line);
+  border-bottom: 1px solid var(--felt-line);
+  padding: 6px 0;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.felt-msg { text-align: center; min-height: 34px; display: grid; place-items: center; }
+.felt-msg span { background: rgba(0, 0, 0, 0.35); padding: 6px 16px; border-radius: 999px; font-weight: 600; color: #fff; font-size: 15px; }
+.player-hands { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; align-items: flex-end; }
+.p-hand { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 12px 8px; border-radius: 16px; border: 2px solid transparent; transition: border-color 0.2s, background 0.2s; }
+.p-hand.active { border-color: rgba(255, 255, 255, 0.55); background: rgba(255, 255, 255, 0.05); }
+.p-hand.dim { opacity: 0.6; }
+.p-hand .meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.bet-chip {
+  display: inline-grid;
+  place-items: center;
+  min-width: 46px;
+  height: 46px;
+  padding: 0 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f5f5f5 0 42%, transparent 43%), conic-gradient(var(--chip, #d33) 0 12.5%, #f5f5f5 0 25%, var(--chip, #d33) 0 37.5%, #f5f5f5 0 50%, var(--chip, #d33) 0 62.5%, #f5f5f5 0 75%, var(--chip, #d33) 0 87.5%, #f5f5f5 0);
+  color: #1b1f23;
+  font-weight: 800;
+  font-size: 12px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35), 0 0 0 3px var(--chip, #d33) inset;
+}
+.result-tag { font-weight: 700; font-size: 13px; padding: 3px 10px; border-radius: 999px; background: rgba(0, 0, 0, 0.4); }
+.result-tag.win, .result-tag.blackjack { background: var(--green); color: #052a1c; }
+.result-tag.lose, .result-tag.bust { background: var(--red); color: #2c0606; }
+.result-tag.push { background: var(--cell-white); color: var(--cell-ink); }
+.result-tag.surrender { background: var(--rose); color: #2f0a0f; }
+
+.controls { display: grid; gap: 14px; }
+.bet-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.chip-btn {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  background: radial-gradient(circle, var(--chip) 0 44%, transparent 45%), conic-gradient(var(--chip) 0 12.5%, #f2f2f2 0 25%, var(--chip) 0 37.5%, #f2f2f2 0 50%, var(--chip) 0 62.5%, #f2f2f2 0 75%, var(--chip) 0 87.5%, #f2f2f2 0);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4), inset 0 0 0 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.chip-btn:hover { transform: translateY(-3px); }
+.chip-btn:disabled { opacity: 0.3; transform: none; cursor: not-allowed; }
+.bet-display { text-align: center; }
+.bet-display b { font-size: 28px; font-variant-numeric: tabular-nums; }
+.side { display: grid; gap: 14px; }
+.side .panel { padding: 16px 18px; }
+.side h4 { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+.bankroll { font-size: 32px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.coach-msg { font-size: 14px; color: #d6dbe0; display: grid; gap: 6px; }
+.coach-msg .title { font-weight: 700; font-size: 15px; }
+.coach-msg.good .title { color: var(--green); }
+.coach-msg.bad .title { color: var(--red); }
+.count-box { display: flex; gap: 16px; }
+.count-box div { display: grid; }
+.count-box b { font-size: 24px; font-variant-numeric: tabular-nums; }
+.count-box span { font-size: 12px; color: var(--muted); }
+.insurance-ask { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; background: rgba(0, 0, 0, 0.3); padding: 12px 16px; border-radius: 14px; }
+.kv { display: flex; justify-content: space-between; font-size: 14px; padding: 3px 0; color: var(--muted); }
+.kv b { color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* ---------- Chart view ---------- */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+.cell-detail { position: sticky; top: 80px; }
+.chart-toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+
+/* ---------- Count ---------- */
+.count-stage { display: grid; place-items: center; min-height: 300px; gap: 16px; padding: 30px; }
+.count-stage .card { --cw: 110px; }
+.count-input { display: flex; gap: 10px; align-items: center; justify-content: center; }
+.count-input input {
+  width: 120px;
+  font: inherit;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+  color: var(--text);
+}
+.hilo-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 420px; }
+.hilo-keys .act { font-size: 22px; }
+
+/* ---------- Stats ---------- */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
+.cat-bars { display: grid; gap: 12px; }
+.cat-bar { display: grid; grid-template-columns: 110px 1fr 70px; gap: 12px; align-items: center; font-size: 14px; }
+.cat-bar .progress { height: 10px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 20px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s;
+  z-index: 100;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+}
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .table-layout { grid-template-columns: 1fr; }
+  .chart-grid { grid-template-columns: 1fr; }
+  .learn-hero { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  /* Cell details open as a bottom sheet instead of sitting below all the tables */
+  .cell-detail {
+    position: fixed;
+    top: auto;
+    left: 10px;
+    right: 10px;
+    bottom: calc(var(--nav-h, 0px) + 10px);
+    z-index: 55;
+    max-height: 62vh;
+    overflow-y: auto;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.55);
+    border-color: var(--line);
+    display: none;
+    animation: viewIn 0.2s ease;
+  }
+  .cell-detail.open { display: block; }
+}
+.sheet-close { display: none; }
+@media (max-width: 960px) {
+  .sheet-close { display: inline-flex; position: absolute; top: 12px; right: 12px; }
+}
+@media (max-width: 640px) {
+  :root { --cw: 60px; --nav-h: calc(66px + env(safe-area-inset-bottom)); }
+  main { padding: 14px 14px calc(var(--nav-h) + 24px); }
+  /* No backdrop-filter here: it would trap the fixed tab bar inside the header. */
+  .topbar { padding: 0 14px; padding-top: env(safe-area-inset-top); gap: 10px; height: calc(52px + env(safe-area-inset-top)); backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(23, 25, 28, 0.98); }
+
+  /* Bottom tab bar */
+  .tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    overflow: visible;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    background: rgba(20, 22, 25, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line-soft);
+  }
+  .tabs a { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 0; border-radius: 12px; font-size: 11px; font-weight: 500; }
+  .tabs a:hover { background: transparent; }
+  .tabs a.active { background: transparent; color: var(--green); font-weight: 600; }
+  .tabs a .ico { display: block; }
+  .tabs a.active .ico { stroke-width: 2.2; }
+  #toast { bottom: calc(var(--nav-h) + 86px); }
+
+  /* Compact page headers on the play screens */
+  .page-head { margin-bottom: 14px; gap: 10px; }
+  .page-head.compact p, .page-head.compact .eyebrow { display: none; }
+  .page-head.compact h1 { font-size: 26px; }
+
+  /* Action buttons stay within thumb reach, above the tab bar */
+  .actions {
+    gap: 6px;
+    position: sticky;
+    bottom: calc(var(--nav-h) + 8px);
+    z-index: 20;
+    padding: 8px;
+    margin: 0 -8px;
+    border-radius: 20px;
+    background: rgba(23, 25, 28, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .act { font-size: 16px; padding: 16px 4px 12px; }
+  .feedback { scroll-margin-bottom: calc(var(--nav-h) + 110px); }
+  .trainer { gap: 12px; }
+  .trainer .felt { --cw: 58px; grid-template-columns: 1fr 1fr; gap: 10px; padding: 18px 10px; min-height: 0; }
+  .trainer .felt .vs { display: none; }
+  .trainer .seat-label { font-size: 10px; letter-spacing: 0.12em; }
+  .trainer .total-badge { font-size: 13px; padding: 2px 10px; }
+  .stat-pill { padding: 4px 10px; font-size: 12px; }
+  .stat-pill b { font-size: 14px; }
+  .drill-panel .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -4px; padding: 0 4px; }
+  .drill-panel .chips::-webkit-scrollbar { display: none; }
+  .drill-panel .chip { flex: none; }
+  .drill-panel { padding: 12px; gap: 10px !important; grid-template-columns: minmax(0, 1fr); }
+  .drill-opts { display: none !important; }
+  .drill-opts.open { display: flex !important; }
+
+  /* Table: the controls join the felt's column so the action bar can stick */
+  .table-main .controls { display: contents; }
+  .table-main .controls > * { margin-top: 12px; }
+  .table-felt { padding: 14px 12px 16px; min-height: 380px; gap: 10px; }
+  .felt-rules { display: none; }
+  .topbar { background: var(--bg); }
+  .mini-chart .chart-table { min-width: 0; font-size: 10px; border-spacing: 1px; }
+  .mini-chart .chart-table tbody th, .mini-chart .chart-table thead th:first-child { width: 34px; }
+  .felt-bank { color: #fff; line-height: 1.15; margin-bottom: 6px; }
+  .trainer .felt { scroll-margin-top: 64px; }
+  .felt-coach { text-align: center; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .felt-coach span { display: inline-block; padding: 5px 12px; border-radius: 999px; background: rgba(0, 0, 0, 0.35); }
+  .felt-coach .good { color: #7ff0c3; }
+  .felt-coach .bad { color: #ff9a9a; }
+  .chip-btn { width: 54px; height: 54px; }
+  .table-top { grid-template-columns: 1fr 1fr; row-gap: 14px; }
+  .table-top > .seat { grid-column: 1 / -1; grid-row: 2; }
+  .shoe-meter { min-width: 0; }
+  .player-hands.multi { --cw: 44px; gap: 8px; }
+  .player-hands.multi .p-hand { padding: 6px; }
+  .player-hands.multi .bet-chip { min-width: 36px; height: 36px; font-size: 11px; }
+  .felt-rules { font-size: 10px; letter-spacing: 0.08em; }
+  .hero-cards { display: none; }
+  .hero-card { padding: 22px; }
+  .chart-table { font-size: 11px; }
+  .chart-table th, .chart-table td { height: 24px; }
+  .chart-table tbody th, .chart-table thead th:first-child { width: 40px; }
+  .level { grid-template-columns: 44px 1fr; }
+  .level-num { width: 44px; height: 44px; font-size: 17px; }
+  .level .stars { grid-column: 2; }
+  .cat-bar { grid-template-columns: 80px 1fr 56px; }
+  .count-stage .card { --cw: 90px; }
+  .bust-bars { height: 120px; gap: 3px; }
+  .bust-bars .bar span { font-size: 9px; }
+}
+
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#learn"><span class="brand-mark">21</span><span>Perfect Play<small>Blackjack strategy trainer</small></span></a>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#learn" data-view="learn"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/></svg><span>Learn</span></a>
+      <a href="#drill" data-view="drill"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg><span>Drill</span></a>
+      <a href="#table" data-view="table"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="11" height="15" rx="2"/><path d="M9 3h9a2 2 0 0 1 2 2v12"/></svg><span>Table</span></a>
+      <a href="#chart" data-view="chart"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2.5"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg><span>Chart</span></a>
+      <a href="#count" data-view="count"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v9M7.5 8h9M7.5 18.5h9"/></svg><span>Count</span></a>
+      <a href="#progress" data-view="progress"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7M12 20V5M19 20v-10"/></svg><span>Progress</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="view" id="view-learn"></section>
+    <section class="view" id="view-drill"></section>
+    <section class="view" id="view-table"></section>
+    <section class="view" id="view-chart"></section>
+    <section class="view" id="view-count"></section>
+    <section class="view" id="view-progress"></section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script>/* js/cards.js */
+/* Cards, hands and the shoe. Plain script: attaches to window.BJ (or globalThis.BJ in Node). */
+(function (G) {
+  'use strict';
+  const BJ = (G.BJ = G.BJ || {});
+
+  const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+  const SUITS = ['♠', '♥', '♦', '♣'];
+  const TEN_RANKS = ['10', 'J', 'Q', 'K'];
+
+  let nextId = 1;
+
+  function rankValue(rank) {
+    if (rank === 'A') return 1;
+    if (TEN_RANKS.includes(rank)) return 10;
+    return Number(rank);
+  }
+
+  function makeCard(rank, suit) {
+    return { id: nextId++, rank, suit, v: rankValue(rank) };
+  }
+
+  /** Unbiased random integer in [0, n). */
+  function rand(n) {
+    const c = G.crypto;
+    if (c && c.getRandomValues) {
+      const buf = new Uint32Array(1);
+      const limit = Math.floor(0x100000000 / n) * n;
+      let x;
+      do {
+        c.getRandomValues(buf);
+        x = buf[0];
+      } while (x >= limit);
+      return x % n;
+    }
+    return Math.floor(Math.random() * n);
+  }
+  const pick = (arr) => arr[rand(arr.length)];
+
+  /** A random card with the given blackjack value (1 = Ace, 10 = any ten-value card). */
+  function cardOfValue(v) {
+    const rank = v === 1 ? 'A' : v === 10 ? pick(TEN_RANKS) : String(v);
+    return makeCard(rank, pick(SUITS));
+  }
+
+  function handInfo(cards) {
+    let hard = 0;
+    let aces = 0;
+    for (const c of cards) {
+      hard += c.v;
+      if (c.v === 1) aces++;
+    }
+    const soft = aces > 0 && hard + 10 <= 21;
+    const total = soft ? hard + 10 : hard;
+    return {
+      total,
+      soft,
+      hard,
+      bust: total > 21,
+      blackjack: cards.length === 2 && total === 21,
+      pair: cards.length === 2 && cards[0].v === cards[1].v,
+    };
+  }
+
+  /** Hi-Lo tag: 2-6 = +1, 7-9 = 0, 10-A = -1. */
+  function hiLo(card) {
+    if (card.v >= 2 && card.v <= 6) return 1;
+    if (card.v >= 7 && card.v <= 9) return 0;
+    return -1;
+  }
+
+  class Shoe {
+    constructor(decks = 6, penetration = 0.75) {
+      this.decks = decks;
+      this.penetration = penetration;
+      this.shuffle();
+    }
+    shuffle() {
+      const cards = [];
+      for (let d = 0; d < this.decks; d++) for (const s of SUITS) for (const r of RANKS) cards.push(makeCard(r, s));
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = rand(i + 1);
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      this.cards = cards;
+      this.pos = 0;
+      this.total = cards.length;
+      this.cut = Math.floor(this.total * this.penetration);
+      this.runningCount = 0;
+    }
+    draw() {
+      if (this.pos >= this.cards.length) this.shuffle();
+      const c = this.cards[this.pos++];
+      this.runningCount += hiLo(c);
+      return c;
+    }
+    get remaining() {
+      return this.total - this.pos;
+    }
+    get decksRemaining() {
+      return this.remaining / 52;
+    }
+    get needsShuffle() {
+      return this.pos >= this.cut;
+    }
+  }
+
+  /** HTML for one card. opts: { faceDown, cls } */
+  function cardHTML(card, opts = {}) {
+    const cls = opts.cls ? ' ' + opts.cls : '';
+    if (opts.faceDown || !card) return `<div class="card back${cls}" aria-label="face-down card"></div>`;
+    const red = card.suit === '♥' || card.suit === '♦';
+    const face = ['J', 'Q', 'K'].includes(card.rank);
+    const center = face
+      ? `<span class="pip face"><span>${card.rank}</span><small>${card.suit}</small></span>`
+      : card.rank === 'A'
+        ? `<span class="pip ace">${card.suit}</span>`
+        : `<span class="pip">${card.suit}</span>`;
+    return (
+      `<div class="card ${red ? 'red' : 'black'}${cls}" data-id="${card.id}" aria-label="${card.rank}${card.suit}">` +
+      `<span class="corner tl"><b>${card.rank}</b><i>${card.suit}</i></span>${center}` +
+      `<span class="corner br"><b>${card.rank}</b><i>${card.suit}</i></span></div>`
+    );
+  }
+
+  Object.assign(BJ, { RANKS, SUITS, TEN_RANKS, makeCard, cardOfValue, handInfo, hiLo, Shoe, cardHTML, rand, pick });
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/strategy.js */
+/* Basic strategy: the chart (transcribed cell-for-cell from the Blackjack Apprenticeship chart),
+   the decision engine, plain-English explanations, and dealer outcome probabilities. */
+(function (G) {
+  'use strict';
+  const BJ = (G.BJ = G.BJ || {});
+
+  // Dealer upcards in chart column order. 11 = Ace.
+  const UPCARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  const row = (s) => s.trim().split(/\s+/);
+
+  // Pair splitting. Y = split, YN = split only if double-after-split (DAS) is allowed, N = don't split.
+  const PAIRS = {
+    11: row('Y  Y  Y  Y  Y  Y  Y  Y  Y  Y'), // A,A
+    10: row('N  N  N  N  N  N  N  N  N  N'), // T,T
+    9: row('Y  Y  Y  Y  Y  N  Y  Y  N  N'),
+    8: row('Y  Y  Y  Y  Y  Y  Y  Y  Y  Y'),
+    7: row('Y  Y  Y  Y  Y  Y  N  N  N  N'),
+    6: row('YN Y  Y  Y  Y  N  N  N  N  N'),
+    5: row('N  N  N  N  N  N  N  N  N  N'),
+    4: row('N  N  N  YN YN N  N  N  N  N'),
+    3: row('YN YN Y  Y  Y  Y  N  N  N  N'),
+    2: row('YN YN Y  Y  Y  Y  N  N  N  N'),
+  };
+
+  // Soft totals keyed by total (13 = A,2 ... 20 = A,9). D = double else hit, Ds = double else stand.
+  const SOFT = {
+    20: row('S  S  S  S  S  S  S  S  S  S'),
+    19: row('S  S  S  S  Ds S  S  S  S  S'),
+    18: row('Ds Ds Ds Ds Ds S  S  H  H  H'),
+    17: row('H  D  D  D  D  H  H  H  H  H'),
+    16: row('H  H  D  D  D  H  H  H  H  H'),
+    15: row('H  H  D  D  D  H  H  H  H  H'),
+    14: row('H  H  H  D  D  H  H  H  H  H'),
+    13: row('H  H  H  D  D  H  H  H  H  H'),
+  };
+
+  // Hard totals. Row 17 means "17 or more", row 8 means "8 or less".
+  const HARD = {
+    17: row('S  S  S  S  S  S  S  S  S  S'),
+    16: row('S  S  S  S  S  H  H  H  H  H'),
+    15: row('S  S  S  S  S  H  H  H  H  H'),
+    14: row('S  S  S  S  S  H  H  H  H  H'),
+    13: row('S  S  S  S  S  H  H  H  H  H'),
+    12: row('H  H  S  S  S  H  H  H  H  H'),
+    11: row('D  D  D  D  D  D  D  D  D  D'),
+    10: row('D  D  D  D  D  D  D  D  H  H'),
+    9: row('H  D  D  D  D  H  H  H  H  H'),
+    8: row('H  H  H  H  H  H  H  H  H  H'),
+  };
+
+  // Late surrender: hard total -> dealer upcards to surrender against.
+  const SURRENDER = { 16: [9, 10, 11], 15: [10], 14: [] };
+
+  const CHART = {
+    UPCARDS,
+    PAIRS,
+    SOFT,
+    HARD,
+    SURRENDER,
+    PAIR_ROWS: [11, 10, 9, 8, 7, 6, 5, 4, 3, 2],
+    SOFT_ROWS: [20, 19, 18, 17, 16, 15, 14, 13],
+    HARD_ROWS: [17, 16, 15, 14, 13, 12, 11, 10, 9, 8],
+    SURR_ROWS: [16, 15, 14],
+  };
+
+  const ACTIONS = {
+    H: { name: 'Hit', key: 'H' },
+    S: { name: 'Stand', key: 'S' },
+    D: { name: 'Double', key: 'D' },
+    P: { name: 'Split', key: 'P' },
+    R: { name: 'Surrender', key: 'R' },
+  };
+
+  const upLabel = (u) => (u === 11 ? 'A' : String(u));
+  const upName = (u) => (u === 11 ? 'an Ace' : u === 8 ? 'an 8' : 'a ' + u);
+  const pairLabel = (pv) => (pv === 11 ? 'A,A' : pv === 10 ? '10,10' : `${pv},${pv}`);
+  const hardRow = (t) => Math.max(8, Math.min(17, t));
+  const toUp = (v) => (v === 1 ? 11 : v);
+
+  /**
+   * The basic-strategy play for a hand.
+   * @param cards player cards
+   * @param upV dealer upcard value (1 = Ace ... 10)
+   * @param ctx { canDouble, canSplit, canSurrender, das }
+   * @returns { action, table, row, up, code, pair, surrenderNote }
+   */
+  function decide(cards, upV, ctx) {
+    const u = toUp(upV);
+    const col = u - 2;
+    const h = BJ.handInfo(cards);
+    const two = cards.length === 2;
+    const base = { up: u, hand: h, cards, ctx, pair: null, surrenderNote: false };
+
+    // 1. Surrender (first decision only). A pair of 8s is always split, never surrendered.
+    const surrCell = !h.soft && two && !h.pair && SURRENDER[h.total] && SURRENDER[h.total].includes(u);
+    if (surrCell && ctx.canSurrender) {
+      return { ...base, action: 'R', table: 'surrender', row: h.total, code: 'SUR' };
+    }
+    if (!h.soft && SURRENDER[h.total] && SURRENDER[h.total].includes(u) && !(two && h.pair)) {
+      base.surrenderNote = true; // chart would surrender, but it isn't available here
+    }
+
+    // 2. Split.
+    if (two && h.pair && ctx.canSplit) {
+      const pv = toUp(cards[0].v);
+      const code = PAIRS[pv][col];
+      base.pair = { row: pv, code };
+      if (code === 'Y' || (code === 'YN' && ctx.das)) {
+        return { ...base, action: 'P', table: 'pairs', row: pv, code };
+      }
+    }
+
+    // 3/4. Double, then hit or stand.
+    if (h.soft) {
+      if (h.total >= 21) return { ...base, action: 'S', table: 'soft', row: 21, code: 'S' };
+      if (h.total <= 12) return { ...base, action: 'H', table: 'soft', row: 12, code: 'H' };
+      const code = SOFT[h.total][col];
+      return { ...base, action: resolveCode(code, ctx), table: 'soft', row: h.total, code };
+    }
+    const r = hardRow(h.total);
+    const code = HARD[r][col];
+    return { ...base, action: resolveCode(code, ctx), table: 'hard', row: r, code };
+  }
+
+  function resolveCode(code, ctx) {
+    if (code === 'D') return ctx.canDouble ? 'D' : 'H';
+    if (code === 'Ds') return ctx.canDouble ? 'D' : 'S';
+    return code;
+  }
+
+  /** Stable key for per-cell stats: table:row:upcard */
+  function cellKey(rec) {
+    return `${rec.table}:${rec.row}:${rec.up}`;
+  }
+
+  // ---------- Dealer probabilities (infinite deck, dealer peeks for blackjack) ----------
+  const P = [0, 1 / 13, 1 / 13, 1 / 13, 1 / 13, 1 / 13, 1 / 13, 1 / 13, 1 / 13, 1 / 13, 4 / 13];
+  const distCache = {};
+
+  /** Probability the dealer finishes on 17..21 or busts, given the upcard (2..11) and no dealer blackjack. */
+  function dealerDist(u, h17 = true) {
+    const key = u + ':' + h17;
+    if (distCache[key]) return distCache[key];
+    const memo = new Map();
+    const rec = (hard, ace) => {
+      const soft = ace && hard + 10 <= 21;
+      const t = soft ? hard + 10 : hard;
+      if (t > 21) return [0, 0, 0, 0, 0, 1];
+      if (t >= 17 && !(t === 17 && soft && h17)) {
+        const r = [0, 0, 0, 0, 0, 0];
+        r[t - 17] = 1;
+        return r;
+      }
+      const k = hard * 2 + (ace ? 1 : 0);
+      if (memo.has(k)) return memo.get(k);
+      const out = [0, 0, 0, 0, 0, 0];
+      for (let v = 1; v <= 10; v++) {
+        const sub = rec(hard + v, ace || v === 1);
+        for (let i = 0; i < 6; i++) out[i] += P[v] * sub[i];
+      }
+      memo.set(k, out);
+      return out;
+    };
+    const upV = u === 11 ? 1 : u;
+    const out = [0, 0, 0, 0, 0, 0];
+    let norm = 0;
+    for (let v = 1; v <= 10; v++) {
+      const bj = (upV === 1 && v === 10) || (upV === 10 && v === 1);
+      if (bj) continue; // dealer has already peeked: no blackjack
+      norm += P[v];
+      const sub = rec(upV + v, upV === 1 || v === 1);
+      for (let i = 0; i < 6; i++) out[i] += P[v] * sub[i];
+    }
+    const res = { 17: 0, 18: 0, 19: 0, 20: 0, 21: 0, bust: 0 };
+    [17, 18, 19, 20, 21].forEach((t, i) => (res[t] = out[i] / norm));
+    res.bust = out[5] / norm;
+    distCache[key] = res;
+    return res;
+  }
+  const bustPct = (u) => Math.round(dealerDist(u).bust * 100);
+
+  // ---------- Explanations ----------
+  const weak = (u) => u >= 2 && u <= 6;
+
+  function describeHand(cards) {
+    const h = BJ.handInfo(cards);
+    if (h.pair) {
+      const v = cards[0].v;
+      return v === 1 ? 'Pair of Aces' : v === 10 ? 'Pair of 10s' : `Pair of ${v}s`;
+    }
+    if (h.soft) return cards.length === 2 ? `Soft ${h.total} (A,${h.total - 11})` : `Soft ${h.total}`;
+    return `Hard ${h.total}`;
+  }
+
+  function explainHard(t, u, rec) {
+    const b = bustPct(u);
+    const r = hardRow(t);
+    if (r === 8) return `Hard ${t} can't bust with one more card, and it's too weak to double. Always hit.`;
+    if (r === 17) return `Hard ${t} busts on most hits. Always stand on hard 17 or more, whatever the dealer shows.`;
+    if (r === 9) {
+      if (u >= 3 && u <= 6)
+        return `Hard 9 against a weak ${upLabel(u)} (dealer busts about ${b}% of the time) is a doubling spot. You'll often finish on 19 or 20.`;
+      return `Hard 9 only doubles against 3 to 6. Against ${upName(u)} the dealer isn't weak enough, so just hit.`;
+    }
+    if (r === 10) {
+      if (u <= 9) return `10 is ahead of every upcard from 2 to 9. Nearly a third of the deck is 10-value, which gives you 20. Double.`;
+      return `The dealer's ${upLabel(u)} is as strong as your 10, so don't double. Just hit.`;
+    }
+    if (r === 11) return `11 is the best doubling hand in the game. Double against everything, even an Ace.`;
+    if (r === 12) {
+      if (u === 2 || u === 3)
+        return `12 vs ${upLabel(u)} is a hit. Only 10-value cards bust you, and the dealer's ${upLabel(u)} only busts about ${b}% of the time.`;
+      if (weak(u))
+        return `The dealer shows a bust card (${upLabel(u)}) and busts about ${b}% of the time. Don't risk your own hand. Stand and let them draw.`;
+      return `A dealer ${upLabel(u)} makes 17 or better most of the time (busts only ${b}%), so standing on 12 usually loses. Hit.`;
+    }
+    // 13-16
+    if (weak(u))
+      return `${t} is a stiff hand, but the dealer's ${upLabel(u)} is a bust card. They must keep hitting to 17 and bust about ${b}% of the time. Stand and let them take the risk.`;
+    let s = `Against ${upName(u)} the dealer usually makes 17 or more (busts only about ${b}%). Standing on ${t} loses too often, so hit even though you might bust.`;
+    if (rec && rec.surrenderNote)
+      s += " It's one of the toughest hands in blackjack: you're the underdog whatever you do, but hitting loses less than standing.";
+    return s;
+  }
+
+  function explainSoft(t, u, rec) {
+    const b = bustPct(u);
+    const cantDbl = rec && !rec.ctx.canDouble;
+    if (t >= 21) return 'Soft 21. Stand.';
+    if (t <= 12) return 'Two Aces you can\'t split play as soft 12. Hit, you can\'t bust.';
+    if (t === 20) return 'Soft 20 is a monster hand. Never break it. Stand.';
+    if (t === 19) {
+      if (u === 6)
+        return cantDbl
+          ? 'The chart says Ds: double if allowed, otherwise stand. You can only double on two cards, so stand.'
+          : `The dealer's 6 is the weakest upcard (busts about ${b}%). Doubling soft 19 here wins more than standing. Code Ds: if you can't double, stand.`;
+      return 'Soft 19 is a strong hand. Stand.';
+    }
+    if (t === 18) {
+      if (weak(u))
+        return cantDbl
+          ? 'The chart says Ds: double if allowed, otherwise stand. You can\'t double here, so stand on 18.'
+          : `Soft 18 can't bust with one card, and the dealer's ${upLabel(u)} busts about ${b}% of the time. Double. Code Ds: if you can't double, stand.`;
+      if (u === 7 || u === 8) return `Against ${upName(u)}, your 18 is level with or ahead of the dealer's likely total. Stand.`;
+      return `This is the most-missed hand in blackjack. Soft 18 is an underdog against ${upName(u)}, and you can't bust with one card. Hit to improve.`;
+    }
+    const lo = t === 17 ? 3 : t >= 15 ? 4 : 5;
+    const doubles = u >= lo && u <= 6;
+    const name = `Soft ${t}`;
+    if (doubles) {
+      if (cantDbl) return `The chart says D: double if allowed, otherwise hit. You can only double on two cards, so hit.`;
+      return `${name} can't bust with one card, and the dealer's ${upLabel(u)} busts about ${b}% of the time. That's a doubling spot (A,${t - 11} doubles against ${lo} to 6).`;
+    }
+    if (t === 17) return 'Never stand on soft 17. It rarely wins and can\'t bust with one card. Hit. (It doubles only against 3 to 6.)';
+    return `${name} only doubles against ${lo} to 6. Against ${upName(u)}, just hit. You can't bust.`;
+  }
+
+  function explainPair(pv, u, code, rec) {
+    const das = rec.ctx.das;
+    const fallback = rec.action !== 'P' ? ` ${actionPhrase(rec)}` : '';
+    switch (pv) {
+      case 11:
+        return 'Always split Aces. One soft 12 becomes two hands that each start with 11, and each has a great shot at 21.';
+      case 10:
+        return 'Never split 10s. You already have 20, which wins most of the time. Don\'t break up a winner.' + fallback;
+      case 9:
+        if (code === 'Y') return `18 isn't strong enough against ${upName(u)}. Two hands that start with 9 do better. Split.`;
+        if (u === 7) return 'The dealer\'s 7 most often makes 17, and your 18 already beats it. Stand.';
+        return `Against ${upName(u)}, splitting puts two 9s up against a strong card. Keep the 18. Stand.`;
+      case 8:
+        return 'Always split 8s. 16 is the worst hand in blackjack, and two hands that start with 8 lose far less, even against a 10 or an Ace.';
+      case 7:
+        return code === 'Y'
+          ? `Hard 14 is weak. Against ${upName(u)}, two hands that start with 7 do better. Split.`
+          : `Don't split 7s against ${upName(u)}.` + fallback;
+      case 6:
+        if (code === 'YN')
+          return das
+            ? 'Against a 2, splitting 6s only pays when you can double after splitting (DAS is on). Split.'
+            : 'Without double after split, 6,6 vs 2 is played as hard 12.' + fallback;
+        return code === 'Y'
+          ? `Two hands that start with 6, against a dealer bust card (${upLabel(u)}). Split.`
+          : `Don't split 6s against ${upName(u)}.` + fallback;
+      case 5:
+        return 'Never split 5s. Treat them as hard 10.' + fallback;
+      case 4:
+        if (code === 'YN')
+          return das
+            ? '4s split only against 5 or 6, and only with double after split. You\'ll often draw to 10 or 11 and double. Split.'
+            : 'Without double after split, keep the 4s together as hard 8.' + fallback;
+        return 'Don\'t split 4s. Play them as hard 8.' + fallback;
+      default: // 2,2 and 3,3
+        if (code === 'YN')
+          return das
+            ? `Small pairs split against 2 or 3 only when you can double after splitting (DAS is on). Split.`
+            : `Without double after split, don't split ${pairLabel(pv)} against ${upName(u)}.` + fallback;
+        return code === 'Y'
+          ? `Small pairs split against 4 to 7. You start two hands against a dealer who's likely to bust or stop on a weak 17.`
+          : `Don't split ${pairLabel(pv)} against ${upName(u)}.` + fallback;
+    }
+  }
+
+  function actionPhrase(rec) {
+    const h = rec.hand;
+    const what = h.soft ? `soft ${h.total}` : `hard ${h.total}`;
+    return `Play it as ${what}: ${ACTIONS[rec.action].name.toLowerCase()}.`;
+  }
+
+  function explainSurrender(t, u) {
+    return `Hard ${t} vs ${upName(u)} is one of the worst spots in the game. Playing it out loses more than half your bet on average. Surrendering loses exactly half. If surrender isn't offered, hit.`;
+  }
+
+  /** { headline, why } for a decision record from decide(). */
+  function explain(rec) {
+    const u = rec.up;
+    const h = rec.hand;
+    const hand = describeHand(rec.cards);
+    const headline = `${hand} vs ${upLabel(u)}: ${ACTIONS[rec.action].name}`;
+    let why;
+    if (rec.table === 'surrender') why = explainSurrender(h.total, u);
+    else if (rec.pair) why = explainPair(rec.pair.row, u, rec.pair.code, rec);
+    else if (rec.table === 'soft') why = explainSoft(h.total, u, rec);
+    else why = explainHard(h.total, u, rec);
+    return { headline, hand, why };
+  }
+
+  Object.assign(BJ, {
+    CHART,
+    ACTIONS,
+    decide,
+    explain,
+    cellKey,
+    dealerDist,
+    bustPct,
+    describeHand,
+    upLabel,
+    pairLabel,
+    hardRow,
+    toUp,
+  });
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/engine.js */
+/* Table game engine: one seat vs the dealer. Pure logic, no DOM. */
+(function (G) {
+  'use strict';
+  const BJ = (G.BJ = G.BJ || {});
+
+  const DEFAULT_RULES = {
+    decks: 6,
+    penetration: 0.75,
+    h17: true, // dealer hits soft 17
+    das: true, // double after split
+    surrender: false, // European tables: no surrender (the engine still supports it if turned on)
+    maxHands: 4, // split up to 4 hands
+    bjPayout: 1.5, // 3:2
+    minBet: 5,
+  };
+
+  class TableGame {
+    constructor(opts = {}) {
+      this.rules = { ...DEFAULT_RULES, ...(opts.rules || {}) };
+      this.shoe = opts.shoe || new BJ.Shoe(this.rules.decks, this.rules.penetration);
+      this.bankroll = opts.bankroll != null ? opts.bankroll : 1000;
+      this.phase = 'betting'; // betting | insurance | player | done
+      this.hands = [];
+      this.dealer = [];
+      this.holeHidden = true;
+      this.active = 0;
+      this.insurance = 0;
+      this.insuranceNet = 0;
+      this.roundNet = 0;
+      this.shuffled = false;
+    }
+
+    draw() {
+      return this.shoe.draw();
+    }
+
+    get up() {
+      return this.dealer[0];
+    }
+
+    canDeal(bet) {
+      return (this.phase === 'betting' || this.phase === 'done') && bet >= this.rules.minBet && bet <= this.bankroll;
+    }
+
+    deal(bet) {
+      if (!this.canDeal(bet)) throw new Error('Cannot deal');
+      this.shuffled = false;
+      if (this.shoe.needsShuffle) {
+        this.shoe.shuffle();
+        this.shuffled = true;
+      }
+      this.bankroll -= bet;
+      this.hands = [newHand(bet)];
+      this.dealer = [];
+      this.holeHidden = true;
+      this.insurance = 0;
+      this.insuranceNet = 0;
+      this.insuranceOffered = false;
+      this.roundNet = 0;
+      this.active = 0;
+      const h = this.hands[0];
+      h.cards.push(this.draw());
+      this.dealer.push(this.draw());
+      h.cards.push(this.draw());
+      this.dealer.push(this.draw());
+      if (this.up.v === 1) {
+        this.insuranceOffered = true;
+        this.phase = 'insurance';
+        return;
+      }
+      this._afterInsurance();
+    }
+
+    /** Insurance costs half the bet and pays 2:1 if the dealer has blackjack. */
+    resolveInsurance(take) {
+      if (this.phase !== 'insurance') return;
+      if (take) {
+        const cost = this.hands[0].bet / 2;
+        if (cost <= this.bankroll) {
+          this.bankroll -= cost;
+          this.insurance = cost;
+        }
+      }
+      this._afterInsurance();
+    }
+
+    _afterInsurance() {
+      const dealerBJ = BJ.handInfo(this.dealer).blackjack;
+      const playerBJ = BJ.handInfo(this.hands[0].cards).blackjack;
+      // Dealer peeks under an Ace or 10.
+      if (dealerBJ || playerBJ) {
+        this.holeHidden = false;
+        this._settle();
+        return;
+      }
+      this.phase = 'player';
+    }
+
+    get hand() {
+      return this.hands[this.active];
+    }
+
+    /** Which actions are legal right now for the active hand. */
+    available() {
+      const none = { H: false, S: false, D: false, P: false, R: false };
+      if (this.phase !== 'player') return none;
+      const h = this.hand;
+      const info = BJ.handInfo(h.cards);
+      const two = h.cards.length === 2;
+      return {
+        H: true,
+        S: true,
+        D: two && this.bankroll >= h.bet && (!h.fromSplit || this.rules.das),
+        P: two && info.pair && this.hands.length < this.rules.maxHands && this.bankroll >= h.bet,
+        R: two && this.rules.surrender && this.hands.length === 1 && !h.fromSplit,
+      };
+    }
+
+    /** Context for BJ.decide() matching what is legal right now. */
+    strategyContext() {
+      const a = this.available();
+      return { canDouble: a.D, canSplit: a.P, canSurrender: a.R, das: this.rules.das };
+    }
+
+    act(action) {
+      if (this.phase !== 'player') return false;
+      const a = this.available();
+      if (!a[action]) return false;
+      const h = this.hand;
+      switch (action) {
+        case 'H':
+          h.cards.push(this.draw());
+          if (BJ.handInfo(h.cards).total >= 21) h.done = true;
+          break;
+        case 'S':
+          h.done = true;
+          break;
+        case 'D':
+          this.bankroll -= h.bet;
+          h.bet *= 2;
+          h.doubled = true;
+          h.cards.push(this.draw());
+          h.done = true;
+          break;
+        case 'P': {
+          this.bankroll -= h.bet;
+          const moved = h.cards.pop();
+          const aces = moved.v === 1;
+          const nh = newHand(h.bet);
+          nh.cards.push(moved);
+          nh.fromSplit = h.fromSplit = true;
+          nh.splitAces = h.splitAces = aces;
+          this.hands.splice(this.active + 1, 0, nh);
+          h.cards.push(this.draw());
+          if (aces) {
+            // Split Aces get one card each and no further action.
+            h.done = true;
+            nh.cards.push(this.draw());
+            nh.done = true;
+          } else if (BJ.handInfo(h.cards).total === 21) h.done = true;
+          break;
+        }
+        case 'R':
+          h.surrendered = true;
+          h.done = true;
+          break;
+      }
+      this._advance();
+      return true;
+    }
+
+    _advance() {
+      while (this.active < this.hands.length) {
+        const h = this.hand;
+        if (h.cards.length === 1) {
+          h.cards.push(this.draw());
+          if (h.splitAces || BJ.handInfo(h.cards).total === 21) h.done = true;
+        }
+        if (!h.done) return;
+        this.active++;
+      }
+      this.active = this.hands.length - 1;
+      this._dealerTurn();
+    }
+
+    dealerShouldHit() {
+      const d = BJ.handInfo(this.dealer);
+      return d.total < 17 || (d.total === 17 && d.soft && this.rules.h17);
+    }
+
+    _dealerTurn() {
+      this.holeHidden = false;
+      const live = this.hands.some((h) => !h.surrendered && !BJ.handInfo(h.cards).bust);
+      if (live) while (this.dealerShouldHit()) this.dealer.push(this.draw());
+      this._settle();
+    }
+
+    _settle() {
+      const d = BJ.handInfo(this.dealer);
+      let net = 0;
+      this.preSettle = this.bankroll; // what the player held before payouts (for UI animation)
+      for (const h of this.hands) {
+        const p = BJ.handInfo(h.cards);
+        const natural = p.blackjack && !h.fromSplit;
+        let r, n;
+        if (h.surrendered) [r, n] = ['surrender', -h.bet / 2];
+        else if (d.blackjack) [r, n] = natural ? ['push', 0] : ['lose', -h.bet];
+        else if (natural) [r, n] = ['blackjack', h.bet * this.rules.bjPayout];
+        else if (p.bust) [r, n] = ['bust', -h.bet];
+        else if (d.bust) [r, n] = ['win', h.bet];
+        else if (p.total > d.total) [r, n] = ['win', h.bet];
+        else if (p.total < d.total) [r, n] = ['lose', -h.bet];
+        else [r, n] = ['push', 0];
+        h.result = r;
+        h.net = n;
+        this.bankroll += h.bet + n;
+        net += n;
+      }
+      if (this.insurance) {
+        if (d.blackjack) {
+          this.insuranceNet = this.insurance * 2;
+          this.bankroll += this.insurance * 3;
+        } else this.insuranceNet = -this.insurance;
+        net += this.insuranceNet;
+      }
+      this.roundNet = net;
+      this.phase = 'done';
+    }
+
+    /** Hi-Lo running count of cards the player has seen (excludes a hidden hole card). */
+    visibleCount() {
+      let rc = this.shoe.runningCount;
+      if (this.holeHidden && this.dealer[1] && this.phase !== 'betting') rc -= BJ.hiLo(this.dealer[1]);
+      return rc;
+    }
+  }
+
+  function newHand(bet) {
+    return {
+      cards: [],
+      bet,
+      doubled: false,
+      done: false,
+      fromSplit: false,
+      splitAces: false,
+      surrendered: false,
+      result: null,
+      net: 0,
+    };
+  }
+
+  BJ.TableGame = TableGame;
+  BJ.DEFAULT_RULES = DEFAULT_RULES;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/stats.js */
+/* Progress + per-cell accuracy, persisted in localStorage (safe if storage is unavailable). */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+  const KEY = 'perfect-play-v1';
+
+  const fresh = () => ({
+    cells: {}, // "hard:16:10" -> { n, c }
+    tables: {}, // hard | soft | pairs | insurance -> { n, c }
+    total: { n: 0, c: 0 },
+    mistakes: [],
+    bestStreak: 0,
+    speedBest: 0,
+    levels: {}, // id -> { best, stars }
+    table: { bankroll: 1000, rounds: 0, net: 0, n: 0, c: 0 },
+    count: { runBest: 0, valuesBest: 0 },
+    days: {}, // "2026-11-10" -> { n, c }
+    settings: { autoNext: true, coach: 'feedback', showCount: false, das: true },
+  });
+
+  function load() {
+    try {
+      const raw = G.localStorage && G.localStorage.getItem(KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        const f = fresh();
+        return { ...f, ...d, settings: { ...f.settings, ...(d.settings || {}) }, table: { ...f.table, ...(d.table || {}) }, count: { ...f.count, ...(d.count || {}) } };
+      }
+    } catch (e) {
+      /* storage blocked or corrupt: start fresh */
+    }
+    return fresh();
+  }
+  let data = load();
+
+  function save() {
+    try {
+      G.localStorage && G.localStorage.setItem(KEY, JSON.stringify(data));
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  const bump = (obj, key, ok) => {
+    const o = (obj[key] = obj[key] || { n: 0, c: 0 });
+    o.n++;
+    if (ok) o.c++;
+  };
+  const today = () => new Date().toISOString().slice(0, 10);
+
+  /** Record a strategy decision. rec = BJ.decide() result, chosen = 'H'|'S'|'D'|'P'|'R'. */
+  function record(rec, chosen, source) {
+    const ok = chosen === rec.action;
+    let key = BJ.cellKey(rec);
+    let table = rec.table;
+    // A wrong split belongs to the pair table even if the hand was then played from the hard/soft table.
+    if (!ok && chosen === 'P' && rec.pair) {
+      key = `pairs:${rec.pair.row}:${rec.up}`;
+      table = 'pairs';
+    }
+    bump(data.cells, key, ok);
+    bump(data.tables, table, ok);
+    bump(data.days, today(), ok);
+    data.total.n++;
+    if (ok) data.total.c++;
+    if (source === 'table') {
+      data.table.n++;
+      if (ok) data.table.c++;
+    }
+    if (!ok) {
+      data.mistakes.unshift({ key, cards: rec.cards.map((c) => [c.rank, c.suit]), up: rec.up, chosen, best: rec.action, t: Date.now(), source });
+      if (data.mistakes.length > 40) data.mistakes.length = 40;
+    }
+    save();
+    return ok;
+  }
+
+  function recordInsurance(took) {
+    bump(data.tables, 'insurance', !took);
+    bump(data.days, today(), !took);
+    data.total.n++;
+    if (!took) data.total.c++;
+    save();
+  }
+
+  const acc = (o) => (o && o.n ? o.c / o.n : null);
+
+  BJ.Stats = {
+    get data() {
+      return data;
+    },
+    record,
+    recordInsurance,
+    save,
+    acc,
+    cell: (key) => data.cells[key],
+    reset() {
+      const keepSettings = data.settings;
+      data = fresh();
+      data.settings = keepSettings;
+      save();
+    },
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/ui.js */
+/* Small DOM helpers shared by every view. */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  function el(html) {
+    const t = document.createElement('template');
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+
+  let toastTimer;
+  function toast(msg, ms = 2200) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), ms);
+  }
+
+  function money(n) {
+    const neg = n < 0;
+    const abs = Math.abs(n);
+    const s = abs % 1 ? abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : abs.toLocaleString('en-US');
+    return (neg ? '−$' : '$') + s;
+  }
+  const signed = (n) => (n > 0 ? '+' : '') + money(n);
+  const pct = (x) => (x == null ? '—' : Math.round(x * 100) + '%');
+
+  /** Cards as HTML. opts: { hideSecond, animate (true | Set of seen ids), stagger } */
+  function handHTML(cards, opts = {}) {
+    let k = 0; // index among animated cards, so a single hit animates without delay
+    return cards
+      .map((c, i) => {
+        const faceDown = opts.hideSecond && i === 1;
+        let cls = '';
+        if (opts.animate === true || (opts.animate instanceof Set && !opts.animate.has(c.id))) cls = 'deal-in';
+        if (opts.flipIds && opts.flipIds.has(c.id) && !faceDown) cls = 'flip-in';
+        const html = BJ.cardHTML(c, { faceDown, cls });
+        if (!cls || (!opts.stagger && !opts.delayBase)) return html;
+        const ms = (opts.delayBase || 0) + k++ * (opts.stagger || 0);
+        return ms ? html.replace('<div ', `<div style="animation-delay:${ms}ms" `) : html;
+      })
+      .join('');
+  }
+
+  function totalBadge(cards, opts = {}) {
+    if (!cards.length) return '';
+    const h = BJ.handInfo(cards);
+    let cls = 'total-badge';
+    let label;
+    if (h.blackjack && !opts.noBJ) {
+      cls += ' bj';
+      label = 'Blackjack';
+    } else if (h.bust) {
+      cls += ' bust';
+      label = `Bust · ${h.total}`;
+    } else if (h.soft) {
+      cls += ' soft';
+      label = `Soft ${h.total}`;
+    } else label = opts.plain ? String(h.total) : `Hard ${h.total}`;
+    return `<span class="${cls}">${label}</span>`;
+  }
+
+  function stars(n, max = 3) {
+    let s = '';
+    for (let i = 0; i < max; i++) s += `<span class="${i < n ? 'on' : ''}">★</span>`;
+    return `<span class="stars">${s}</span>`;
+  }
+
+  /** The action buttons (no surrender at European tables). Returns an API to enable, hint and mark them. */
+  const ACTIONS_SHOWN = ['H', 'S', 'D', 'P'];
+  function actionBar(root, onPress) {
+    root.classList.add('actions');
+    root.innerHTML = ACTIONS_SHOWN.map((a) => `<button class="act act-${a}" data-a="${a}">${BJ.ACTIONS[a].name}<small>${a}</small></button>`).join('');
+    root.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-a]');
+      if (b && !b.disabled) onPress(b.dataset.a);
+    });
+    const btn = (a) => root.querySelector(`[data-a="${a}"]`);
+    return {
+      set(avail) {
+        for (const a of ACTIONS_SHOWN) btn(a).disabled = !avail[a];
+      },
+      clearMarks() {
+        $$('.act', root).forEach((b) => b.classList.remove('hint', 'was-wrong', 'was-right'));
+      },
+      hint(a) {
+        this.clearMarks();
+        if (a) btn(a).classList.add('hint');
+      },
+      mark(chosen, best) {
+        this.clearMarks();
+        if (btn(best)) btn(best).classList.add('was-right');
+        if (chosen !== best && btn(chosen)) btn(chosen).classList.add('was-wrong');
+      },
+      disableAll() {
+        for (const a of ACTIONS_SHOWN) btn(a).disabled = true;
+      },
+    };
+  }
+
+  const ACTION_CLASS = { H: 'c-H', S: 'c-S', D: 'c-D', P: 'c-Y', R: 'c-SUR' };
+  const actionTag = (a) => `<span class="tag ${ACTION_CLASS[a]}">${BJ.ACTIONS[a].name}</span>`;
+
+  /** True if the keyboard event should be ignored (typing in a field, modifier keys). */
+  const ignoreKey = (e) => e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '');
+
+  BJ.UI = { $, $$, el, toast, money, signed, pct, handHTML, totalBadge, stars, actionBar, actionTag, ACTION_CLASS, ignoreKey };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/chart.js */
+/* Renders the strategy chart (full tables, single rows, accuracy heatmap) and the Chart view. */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+  const { CHART } = BJ;
+
+  // No surrender table: European tables don't offer it, so those hands are played from Hard Totals.
+  const TITLES = { pairs: 'Pair Splitting', soft: 'Soft Totals', hard: 'Hard Totals' };
+  const CODE_LABEL = { YN: 'Y/N' };
+
+  function rowLabel(kind, r) {
+    if (kind === 'pairs') return r === 11 ? 'A,A' : r === 10 ? 'T,T' : `${r},${r}`;
+    if (kind === 'soft') return `A,${r - 11}`;
+    if (kind === 'hard') return r === 17 ? '17+' : r === 8 ? '≤8' : String(r);
+    return String(r);
+  }
+
+  function code(kind, r, u) {
+    const i = u - 2;
+    if (kind === 'pairs') return CHART.PAIRS[r][i];
+    if (kind === 'soft') return CHART.SOFT[r][i];
+    if (kind === 'hard') return CHART.HARD[r][i];
+    return CHART.SURRENDER[r].includes(u) ? 'SUR' : '';
+  }
+
+  function rowsOf(kind) {
+    return { pairs: CHART.PAIR_ROWS, soft: CHART.SOFT_ROWS, hard: CHART.HARD_ROWS, surrender: CHART.SURR_ROWS }[kind];
+  }
+
+  function heatColor(a) {
+    // red -> amber -> green
+    if (a < 0.6) return '#c8434b';
+    if (a < 0.8) return '#c98a1c';
+    if (a < 0.95) return '#3f9a63';
+    return '#14b57b';
+  }
+
+  /**
+   * opts: { rows, highlight: {row, up}, heat, clickable }
+   */
+  function tableHTML(kind, opts = {}) {
+    const rows = opts.rows || rowsOf(kind);
+    const hl = opts.highlight;
+    const cls = ['chart-table', opts.clickable ? 'clickable' : '', opts.heat ? 'heat' : ''].join(' ');
+    let h = `<table class="${cls}" data-kind="${kind}"><thead><tr><th></th>`;
+    for (const u of CHART.UPCARDS) h += `<th class="${hl && hl.up === u ? 'hl-col' : ''}">${BJ.upLabel(u)}</th>`;
+    h += '</tr></thead><tbody>';
+    for (const r of rows) {
+      h += `<tr><th class="${hl && hl.row === r ? 'hl-row' : ''}">${rowLabel(kind, r)}</th>`;
+      for (const u of CHART.UPCARDS) {
+        const c = code(kind, r, u);
+        const isHl = hl && hl.row === r && hl.up === u;
+        const data = `data-row="${r}" data-up="${u}"`;
+        if (opts.heat) {
+          const s = BJ.Stats.cell(`${kind}:${r}:${u}`);
+          if (!s || !s.n) h += `<td class="h-none ${isHl ? 'hl' : ''}" ${data} title="No attempts yet">·</td>`;
+          else {
+            const a = s.c / s.n;
+            h += `<td class="${isHl ? 'hl' : ''}" ${data} style="background:${heatColor(a)}" title="${s.c}/${s.n} correct">${Math.round(a * 100)}</td>`;
+          }
+        } else {
+          h += `<td class="${c ? 'c-' + c : 'c-blank'} ${isHl ? 'hl' : ''}" ${data}>${CODE_LABEL[c] || c}</td>`;
+        }
+      }
+      h += '</tr>';
+    }
+    return h + '</tbody></table>';
+  }
+
+  const KEYS = {
+    pairs: [['Y', 'c-Y', 'Split'], ['Y/N', 'c-YN', 'Split only if double after split (DAS) is allowed'], ['N', 'c-N', "Don't split"]],
+    soft: [['H', 'c-H', 'Hit'], ['S', 'c-S', 'Stand'], ['D', 'c-D', 'Double if allowed, otherwise hit'], ['Ds', 'c-Ds', 'Double if allowed, otherwise stand']],
+    hard: [['H', 'c-H', 'Hit'], ['S', 'c-S', 'Stand'], ['D', 'c-D', 'Double if allowed, otherwise hit']],
+    surrender: [['SUR', 'c-SUR', 'Surrender (first two cards only)']],
+  };
+  const keyHTML = (kind) =>
+    `<div class="chart-key">${KEYS[kind].map(([t, c, d]) => `<span><i class="${c}">${t}</i>${d}</span>`).join('')}</div>`;
+
+  function blockHTML(kind, opts = {}) {
+    return `<div class="chart-block"><h3>${opts.title || TITLES[kind]}</h3>${tableHTML(kind, opts)}${opts.noKey ? '' : keyHTML(kind)}</div>`;
+  }
+
+  /** The chart rows that decided a hand, with the deciding cell outlined. */
+  function decisionRowsHTML(rec) {
+    let parts = [];
+    const one = (kind, row) => `<div class="mini-chart">${tableHTML(kind, { rows: [row], highlight: { row, up: rec.up } })}</div>`;
+    if (rec.table === 'surrender') parts.push(one('surrender', rec.row));
+    if (rec.pair) parts.push(one('pairs', rec.pair.row));
+    if (rec.table === 'soft' && rec.row >= 13 && rec.row <= 20) parts.push(one('soft', rec.row));
+    if (rec.table === 'hard') parts.push(one('hard', rec.row));
+    return parts.join('');
+  }
+
+  /** Build an example hand for a chart cell (used by Chart view clicks and drills). */
+  function exampleCards(kind, row) {
+    const C = BJ.cardOfValue;
+    if (kind === 'pairs') {
+      const v = row === 11 ? 1 : row;
+      return [C(v), C(v)];
+    }
+    if (kind === 'soft') return [C(1), C(row - 11)];
+    let t = row;
+    if (kind === 'hard' && row === 17) t = 17;
+    if (kind === 'hard' && row === 8) t = 8;
+    const a = t >= 12 ? 10 : Math.max(2, Math.ceil(t / 2) + (t % 2 === 0 ? 1 : 0));
+    const b = t - a;
+    return [C(a), C(b)];
+  }
+
+  // ---------------- Chart view ----------------
+  const ChartView = {
+    mode: 'chart',
+    selected: null,
+    init(root) {
+      this.root = root;
+      root.innerHTML = `
+        <div class="page-head">
+          <div><div class="eyebrow">Reference</div><h1>The Strategy Chart</h1>
+          <p>Cell for cell from the Blackjack Apprenticeship basic strategy chart (6 decks, dealer hits soft 17, double after split). The surrender table is left out because European tables don't offer it. Click any cell to see why. Switch to <b>My accuracy</b> to find your weak spots.</p></div>
+          <div class="seg" id="chart-mode"><button data-m="chart" class="on">Chart</button><button data-m="heat">My accuracy</button></div>
+        </div>
+        <div class="panel" style="margin-bottom:18px">
+          <div class="chart-key" style="gap:10px 22px">
+            <span><b style="color:var(--text)">How to read it:</b></span>
+            <span>1. Pair? Check splitting</span><span>2. Soft total?</span><span>3. Otherwise hard total</span>
+            <span class="muted">Never take insurance or even money.</span>
+          </div>
+        </div>
+        <div class="chart-grid">
+          <div style="display:grid;gap:22px" id="chart-tables"></div>
+          <div class="cell-detail panel" id="cell-detail"></div>
+        </div>`;
+      BJ.UI.$('#chart-mode', root).addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        this.mode = b.dataset.m;
+        BJ.UI.$$('#chart-mode button', root).forEach((x) => x.classList.toggle('on', x === b));
+        this.render();
+      });
+      BJ.UI.$('#chart-tables', root).addEventListener('click', (e) => {
+        const td = e.target.closest('td[data-row]');
+        if (!td) return;
+        const kind = td.closest('table').dataset.kind;
+        this.selected = { kind, row: +td.dataset.row, up: +td.dataset.up };
+        this.render();
+      });
+    },
+    onShow() {
+      this.render();
+    },
+    render() {
+      const heat = this.mode === 'heat';
+      BJ.UI.$$('#chart-mode button', this.root).forEach((x) => x.classList.toggle('on', x.dataset.m === this.mode));
+      const sel = this.selected;
+      const hlFor = (k) => (sel && sel.kind === k ? { row: sel.row, up: sel.up } : null);
+      BJ.UI.$('#chart-tables', this.root).innerHTML = ['pairs', 'soft', 'hard']
+        .map((k) => blockHTML(k, { clickable: true, heat, highlight: hlFor(k), noKey: heat }))
+        .join('') + (heat ? `<p class="muted" style="font-size:14px">Numbers show your % correct for each cell, across drills, lessons and the table. Grey cells haven't come up yet.</p>` : '');
+      this.renderDetail();
+    },
+    renderDetail() {
+      const box = BJ.UI.$('#cell-detail', this.root);
+      const sel = this.selected;
+      box.classList.toggle('open', !!sel); // phones/tablets: shown as a bottom sheet only when a cell is picked
+      if (!sel) {
+        box.innerHTML = `<h4 class="eyebrow" style="color:var(--muted)">Cell details</h4>
+          <p class="muted">Select a cell in any table to see the play, the reasoning, and your record on that hand.</p>
+          <div style="margin-top:18px;display:grid;gap:10px">
+          <p style="font-size:15px"><b>Memorise it in this order</b></p>
+          <ol style="margin:0;padding-left:20px;color:#cdd3d9;display:grid;gap:6px;font-size:15px">
+            <li>Hard 12–17 (stand or hit): the most common hands</li>
+            <li>Doubling: 9, 10, 11</li>
+            <li>Soft totals</li>
+            <li>Pairs</li>
+          </ol></div>`;
+        return;
+      }
+      const ctx = { canDouble: true, canSplit: true, canSurrender: false, das: true };
+      let cards = exampleCards(sel.kind, sel.row);
+      let rec = BJ.decide(cards, sel.up === 11 ? 1 : sel.up, ctx);
+      const exp = BJ.explain(rec);
+      const s = BJ.Stats.cell(`${sel.kind}:${sel.row}:${sel.up}`);
+      const label = rowLabel(sel.kind, sel.row);
+      box.innerHTML = `
+        <button class="btn sm sheet-close" data-close aria-label="Close">✕</button>
+        <div class="eyebrow">${TITLES[sel.kind]} · ${label} vs ${BJ.upLabel(sel.up)}</div>
+        <div style="display:flex;gap:18px;align-items:center;margin:10px 0 14px;--cw:54px">
+          <div class="hand">${BJ.UI.handHTML(cards)}</div>
+          <span class="muted" style="font-weight:700">vs</span>
+          <div class="hand">${BJ.cardHTML(BJ.cardOfValue(sel.up === 11 ? 1 : sel.up))}</div>
+        </div>
+        <h3 style="font-size:22px;margin-bottom:8px">${BJ.ACTIONS[rec.action].name}</h3>
+        <p style="color:#d6dbe0">${exp.why}</p>
+        <div style="margin-top:14px" class="kv"><span>Your record on this cell</span><b>${s && s.n ? `${s.c}/${s.n} (${Math.round((s.c / s.n) * 100)}%)` : 'not played yet'}</b></div>
+        <div class="kv"><span>Dealer busts with ${BJ.upLabel(sel.up)} up</span><b>${BJ.bustPct(sel.up)}%</b></div>
+        <button class="btn primary" style="margin-top:14px;width:100%" id="practice-cell">Drill this hand</button>`;
+      BJ.UI.$('#practice-cell', box).addEventListener('click', () => BJ.App.go('drill', { cell: { ...sel } }));
+      BJ.UI.$('[data-close]', box).addEventListener('click', () => {
+        this.selected = null;
+        this.render();
+      });
+    },
+  };
+
+  BJ.ChartUI = { tableHTML, blockHTML, keyHTML, decisionRowsHTML, rowLabel, code, exampleCards, TITLES };
+  BJ.ChartView = ChartView;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/trainer.js */
+/* Hand generator + the reusable decision Trainer (used by Drill, lesson quizzes and speed rounds). */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+  const { $, el, handHTML, totalBadge } = BJ.UI;
+  const C = BJ.cardOfValue;
+  const R = BJ.rand;
+
+  const randInt = (lo, hi) => lo + R(hi - lo + 1);
+  const isPhone = () => G.matchMedia && G.matchMedia('(max-width: 640px)').matches;
+  function weighted(items) {
+    const total = items.reduce((s, it) => s + it.w, 0);
+    let x = Math.random() * total;
+    for (const it of items) if ((x -= it.w) <= 0) return it;
+    return items[items.length - 1];
+  }
+  const UPS = BJ.CHART.UPCARDS;
+  const randUp = () => UPS[R(UPS.length)];
+
+  // ----- hand builders -----
+  function twoCardHard(t) {
+    const opts = [];
+    for (let a = 2; a <= 10; a++) {
+      const b = t - a;
+      if (b >= 2 && b <= 10 && a !== b) opts.push([a, b]);
+    }
+    const [a, b] = opts[R(opts.length)];
+    return R(2) ? [C(a), C(b)] : [C(b), C(a)];
+  }
+  function multiHard(t) {
+    // An Ace counted as 1 now and then: A,6,9 is hard 16.
+    if (t >= 12 && Math.random() < 0.35) {
+      for (let i = 0; i < 50; i++) {
+        const a = randInt(2, 10);
+        const b = t - 1 - a;
+        if (b >= 2 && b <= 10) return shuffle([C(1), C(a), C(b)]);
+      }
+    }
+    for (let i = 0; i < 200; i++) {
+      const a = randInt(2, Math.min(10, t - 4));
+      const b = randInt(2, Math.min(10, t - a - 2));
+      const c = t - a - b;
+      if (c >= 2 && c <= 10) return shuffle([C(a), C(b), C(c)]);
+    }
+    return twoCardHard(t);
+  }
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = R(i + 1);
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function softHand(s, multi) {
+    const k = s - 11;
+    if (multi && k >= 4) {
+      const a = randInt(2, k - 2);
+      return [C(1), C(a), C(k - a)];
+    }
+    return R(2) ? [C(1), C(k)] : [C(k), C(1)];
+  }
+  const pairHand = (pv) => {
+    const v = pv === 11 ? 1 : pv;
+    return [C(v), C(v)];
+  };
+  function hardFromRow(row, multi) {
+    let t = row;
+    if (row === 8) t = randInt(multi ? 7 : 5, 8);
+    if (row === 17) t = randInt(17, multi ? 20 : 19);
+    return multi && t >= 7 ? multiHard(t) : twoCardHard(t);
+  }
+
+  /** Cards for a chart cell. Returns { cards, up, multi }. */
+  function buildCell(kind, row, up, multi) {
+    if (kind === 'pairs') return { cards: pairHand(row), up, multi: false };
+    if (kind === 'soft') return { cards: softHand(row, multi && row >= 15), up, multi: multi && row >= 15 };
+    const isMulti = multi && (row === 8 ? true : row >= 7);
+    return { cards: hardFromRow(row, isMulti), up, multi: isMulti };
+  }
+
+  const HARD_W = { 8: 1, 9: 2.5, 10: 2.5, 11: 2, 12: 3, 13: 2.5, 14: 2.5, 15: 3, 16: 3, 17: 1 };
+
+  function pickCell(filter) {
+    switch (filter) {
+      case 'hard':
+        return { kind: 'hard', row: weighted(BJ.CHART.HARD_ROWS.map((r) => ({ r, w: HARD_W[r] }))).r, up: randUp() };
+      case 'hard-stiff':
+        return { kind: 'hard', row: weighted([12, 13, 14, 15, 16, 17, 8].map((r) => ({ r, w: r === 17 || r === 8 ? 0.8 : 3 }))).r, up: randUp() };
+      case 'hard-double':
+        return { kind: 'hard', row: weighted([8, 9, 10, 11].map((r) => ({ r, w: r === 8 ? 1 : 3 }))).r, up: randUp() };
+      case 'soft':
+        return { kind: 'soft', row: weighted(BJ.CHART.SOFT_ROWS.map((r) => ({ r, w: r === 20 ? 0.6 : r === 18 ? 2 : 1.3 }))).r, up: randUp() };
+      case 'pairs':
+        return { kind: 'pairs', row: BJ.CHART.PAIR_ROWS[R(10)], up: randUp() };
+      case 'tough': {
+        // The hands players get wrong most often.
+        const spots = [
+          ...[[16, 9], [16, 10], [16, 11], [15, 10], [15, 11], [16, 7]].map(([r, u]) => ({ kind: 'hard', row: r, up: u, w: 2.5 })),
+          ...[[12, 2], [12, 3], [12, 4], [13, 2], [11, 11], [10, 10], [9, 2], [9, 7]].map(([r, u]) => ({ kind: 'hard', row: r, up: u, w: 1.2 })),
+          ...[2, 7, 8, 9, 10, 11].map((u) => ({ kind: 'soft', row: 18, up: u, w: u >= 9 ? 2.5 : 1.2 })),
+          { kind: 'soft', row: 19, up: 6, w: 1 },
+          ...[[8, 10], [8, 11], [9, 7], [9, 8], [9, 10], [11, 11], [4, 5], [5, 10]].map(([r, u]) => ({ kind: 'pairs', row: r, up: u, w: r === 8 ? 2.5 : 1.2 })),
+        ];
+        return weighted(spots);
+      }
+      case 'weak':
+        return weakCell();
+      default: {
+        const kind = weighted([{ k: 'hard', w: 44 }, { k: 'soft', w: 26 }, { k: 'pairs', w: 30 }]).k;
+        return pickCell(kind);
+      }
+    }
+  }
+
+  /** Weight every chart cell by how often you've missed it. */
+  function weakCell() {
+    const items = [];
+    const add = (kind, rows) => {
+      for (const row of rows)
+        for (const up of UPS) {
+          const s = BJ.Stats.cell(`${kind}:${row}:${up}`);
+          const miss = s ? s.n - s.c : 0;
+          const n = s ? s.n : 0;
+          // Unseen cells get a moderate weight; missed cells a lot more; mastered cells little.
+          let w = n === 0 ? 1.2 : 0.25 + (8 * miss) / (n + 1);
+          if (kind === 'hard' && (row === 17 || row === 8)) w *= 0.4;
+          items.push({ kind, row, up, w });
+        }
+    };
+    add('hard', BJ.CHART.HARD_ROWS);
+    add('soft', BJ.CHART.SOFT_ROWS);
+    add('pairs', BJ.CHART.PAIR_ROWS);
+    return weighted(items);
+  }
+
+  /** A full drill situation. opts: { filter, cell, threeCard, das }. No surrender (European rules). */
+  function genSituation(opts) {
+    const cell = opts.cell || pickCell(opts.filter || 'all');
+    const wantMulti = opts.threeCard && !opts.cell && cell.kind !== 'pairs' && Math.random() < 0.22;
+    const s = buildCell(cell.kind, cell.row, cell.up, wantMulti);
+    const multi = s.cards.length > 2;
+    const ctx = multi
+      ? { canDouble: false, canSplit: false, canSurrender: false, das: opts.das }
+      : { canDouble: true, canSplit: true, canSurrender: false, das: !!opts.das };
+    return { cards: s.cards, upV: cell.up === 11 ? 1 : cell.up, ctx, multi };
+  }
+
+  const sameSit = (a, b) =>
+    a && b && a.upV === b.upV && a.cards.length === b.cards.length && a.cards.every((c, i) => c.v === b.cards[i].v);
+
+  // ---------------- Trainer ----------------
+  /**
+   * cfg: { filter, cell, count, timeLimit, threeCard, das, source, onFinish, onExit, title }
+   */
+  class Trainer {
+    constructor(root, cfg) {
+      this.root = root;
+      this.cfg = { das: true, source: 'drill', ...cfg };
+      this.reset();
+      this.build();
+    }
+    reset() {
+      this.n = 0;
+      this.correct = 0;
+      this.streak = 0;
+      this.best = 0;
+      this.misses = [];
+      this.state = 'idle';
+      this.sit = null;
+      this.endAt = null;
+    }
+    get speed() {
+      return !!this.cfg.timeLimit;
+    }
+    build() {
+      const c = this.cfg;
+      this.root.innerHTML = `
+        <div class="trainer">
+          <div class="trainer-bar">
+            <div class="stat-row" data-r="stats"></div>
+            <div style="display:flex;gap:8px;align-items:center">${c.onExit ? `<button class="btn sm ghost" data-r="exit">${c.exitLabel || 'Back'}</button>` : ''}</div>
+          </div>
+          <div class="progress ${this.speed ? 'timer-bar' : ''} ${c.count || this.speed ? '' : 'hidden'}" data-r="prog"><span style="width:0%"></span></div>
+          <div class="felt" data-r="felt">
+            <div class="seat"><div class="seat-label">Dealer shows</div><div class="hand" data-r="dealer"></div><span class="total-badge" data-r="dtotal"></span></div>
+            <div class="vs">VS</div>
+            <div class="seat"><div class="seat-label">Your hand</div><div class="hand" data-r="player"></div><span data-r="ptotal"></span></div>
+            <div class="ctx-note hidden" data-r="ctx"></div>
+          </div>
+          <div data-r="actions"></div>
+          <div data-r="fb"></div>
+        </div>`;
+      this.r = (k) => this.root.querySelector(`[data-r="${k}"]`);
+      this.bar = BJ.UI.actionBar(this.r('actions'), (a) => this.answer(a));
+      if (c.onExit) this.r('exit').addEventListener('click', () => c.onExit());
+      this.root.addEventListener('click', (e) => {
+        if (e.target.closest('[data-r="next"]')) this.next();
+      });
+      // Tap the table to deal the next hand (handy on phones).
+      this.r('felt').addEventListener('click', () => {
+        if (this.state !== 'answered' || this.speed) return;
+        if (this.cfg.count && this.n >= this.cfg.count) this.finish();
+        else this.next();
+      });
+    }
+    start() {
+      this.reset();
+      if (this.speed) {
+        this.endAt = Date.now() + this.cfg.timeLimit * 1000;
+        clearInterval(this.timer);
+        this.timer = setInterval(() => this.tick(), 100);
+      }
+      this.next();
+    }
+    tick() {
+      const left = Math.max(0, this.endAt - Date.now());
+      const pctLeft = (left / (this.cfg.timeLimit * 1000)) * 100;
+      this.r('prog').firstElementChild.style.width = pctLeft + '%';
+      this.renderStats();
+      if (left <= 0) this.finish();
+    }
+    renderStats() {
+      const acc = this.n ? Math.round((this.correct / this.n) * 100) + '%' : '—';
+      const pills = [];
+      if (this.speed) {
+        const left = Math.max(0, Math.ceil((this.endAt - Date.now()) / 1000));
+        pills.push(`<span class="stat-pill">Time <b>${left}s</b></span>`, `<span class="stat-pill">Correct <b>${this.correct}</b></span>`);
+      } else if (this.cfg.count) pills.push(`<span class="stat-pill">Hand <b>${Math.min(this.n + (this.state === 'asking' ? 1 : 0), this.cfg.count)}</b>/${this.cfg.count}</span>`);
+      else pills.push(`<span class="stat-pill">Hands <b>${this.n}</b></span>`);
+      pills.push(`<span class="stat-pill">Accuracy <b>${acc}</b></span>`);
+      pills.push(`<span class="stat-pill fire">Streak <b>${this.streak}</b></span>`);
+      if (!this.cfg.count && !this.speed) pills.push(`<span class="stat-pill">Best <b>${Math.max(this.best, BJ.Stats.data.bestStreak)}</b></span>`);
+      this.r('stats').innerHTML = pills.join('');
+      if (this.cfg.count) this.r('prog').firstElementChild.style.width = (this.n / this.cfg.count) * 100 + '%';
+    }
+    next() {
+      if (this.state === 'done') return;
+      if (this.cfg.count && this.n >= this.cfg.count) return this.finish();
+      clearTimeout(this.autoTimer);
+      let sit;
+      for (let i = 0; i < 8; i++) {
+        sit = genSituation(this.cfg);
+        if (!sameSit(sit, this.sit)) break;
+      }
+      this.sit = sit;
+      const up = C(sit.upV);
+      this.r('dealer').innerHTML = handHTML([up, up], { hideSecond: true, animate: true, stagger: 60 });
+      this.r('dtotal').textContent = BJ.upLabel(BJ.toUp(sit.upV)) === 'A' ? 'Ace' : String(sit.upV);
+      this.r('player').innerHTML = handHTML(sit.cards, { animate: true, stagger: 70, delayBase: 120 });
+      const ph = BJ.handInfo(sit.cards);
+      this.r('ptotal').innerHTML = ph.pair
+        ? `<span class="total-badge ${ph.soft ? 'soft' : ''}">${BJ.describeHand(sit.cards)}</span>`
+        : totalBadge(sit.cards, { noBJ: false });
+      const note = this.r('ctx');
+      const notes = [];
+      if (sit.multi) notes.push(`${sit.cards.length}-card hand: no double or split`);
+      else if (!sit.ctx.das && BJ.handInfo(sit.cards).pair) notes.push('No double after split at this table');
+      note.textContent = notes.join(' · ');
+      note.classList.toggle('hidden', !notes.length);
+      const h = BJ.handInfo(sit.cards);
+      this.bar.clearMarks();
+      this.bar.set({ H: true, S: true, D: sit.ctx.canDouble, P: sit.ctx.canSplit && h.pair });
+      if (!this.speed) this.r('fb').innerHTML = '';
+      const felt = this.r('felt');
+      felt.classList.remove('flash-good', 'flash-bad');
+      // On phones, bring the new hand back into view if you scrolled down to read the feedback.
+      if (isPhone() && felt.getBoundingClientRect().top < 56) felt.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.state = 'asking';
+      this.renderStats();
+    }
+    answer(a) {
+      if (this.state !== 'asking') return;
+      const sit = this.sit;
+      const rec = BJ.decide(sit.cards, sit.upV, sit.ctx);
+      const ok = BJ.Stats.record(rec, a, this.cfg.source);
+      this.n++;
+      if (ok) {
+        this.correct++;
+        this.streak++;
+        this.best = Math.max(this.best, this.streak);
+        if (this.cfg.source === 'drill' && this.streak > BJ.Stats.data.bestStreak) {
+          BJ.Stats.data.bestStreak = this.streak;
+          BJ.Stats.save();
+        }
+      } else {
+        this.streak = 0;
+        this.misses.push({ cards: sit.cards, up: rec.up, chosen: a, best: rec.action, rec });
+      }
+      this.state = 'answered';
+      this.bar.mark(a, rec.action);
+      const felt = this.r('felt');
+      void felt.offsetWidth;
+      felt.classList.add(ok ? 'flash-good' : 'flash-bad');
+      this.renderStats();
+
+      if (this.speed) {
+        this.r('fb').innerHTML = ok ? '' : this.feedbackHTML(rec, a, ok, true);
+        this.autoTimer = setTimeout(() => this.next(), ok ? 220 : 1300);
+        return;
+      }
+      this.r('fb').innerHTML = this.feedbackHTML(rec, a, ok);
+      if (!ok && isPhone()) {
+        const fb = this.r('fb').firstElementChild;
+        if (fb) requestAnimationFrame(() => fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+      }
+      const last = this.cfg.count && this.n >= this.cfg.count;
+      if (ok && BJ.Stats.data.settings.autoNext) this.autoTimer = setTimeout(() => (last ? this.finish() : this.next()), last ? 900 : 1500);
+    }
+    feedbackHTML(rec, chosen, ok, compact) {
+      const exp = BJ.explain(rec);
+      const best = BJ.ACTIONS[rec.action].name;
+      const title = ok ? `Correct: ${best}` : `Basic strategy says ${best}`;
+      const sub = ok ? exp.hand + ' vs ' + BJ.upLabel(rec.up) : `You chose ${BJ.ACTIONS[chosen].name} · ${exp.hand} vs ${BJ.upLabel(rec.up)}`;
+      const last = this.cfg.count && this.n >= this.cfg.count;
+      return `<div class="feedback ${ok ? '' : 'bad'}">
+        <div class="fb-head"><div class="fb-icon">${ok ? '✓' : '✕'}</div><div><div class="fb-title">${title}</div><div class="fb-sub">${sub}</div></div></div>
+        ${compact ? '' : `<p class="fb-why">${exp.why}</p>${BJ.ChartUI.decisionRowsHTML(rec)}`}
+        ${compact ? '' : `<div class="fb-foot"><span class="muted" style="font-size:13px">${ok && BJ.Stats.data.settings.autoNext ? 'Next hand coming up…' : isPhone() ? 'Tap the table or the button for the next hand' : 'Press Enter or Space for the next hand'}</span><button class="btn primary" data-r="next">${last ? 'See results' : 'Next hand'}<kbd>Enter</kbd></button></div>`}
+      </div>`;
+    }
+    finish() {
+      if (this.state === 'done') return;
+      this.state = 'done';
+      clearInterval(this.timer);
+      clearTimeout(this.autoTimer);
+      this.bar.disableAll();
+      const res = { n: this.n, correct: this.correct, acc: this.n ? this.correct / this.n : 0, misses: this.misses, best: this.best };
+      if (this.cfg.onFinish) this.cfg.onFinish(res);
+    }
+    onKey(e) {
+      if (BJ.UI.ignoreKey(e)) return;
+      const k = e.key.toUpperCase();
+      if (this.state === 'asking' && 'HSDP'.includes(k) && k.length === 1) {
+        const b = this.r('actions').querySelector(`[data-a="${k}"]`);
+        if (b && !b.disabled) {
+          e.preventDefault();
+          this.answer(k);
+        }
+      } else if (this.state === 'answered' && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        if (this.cfg.count && this.n >= this.cfg.count) this.finish();
+        else this.next();
+      }
+    }
+    destroy() {
+      clearInterval(this.timer);
+      clearTimeout(this.autoTimer);
+      this.state = 'done';
+    }
+  }
+
+  /** Results screen for a finished quiz or speed round. */
+  function resultsHTML(res, opts = {}) {
+    const pct = Math.round(res.acc * 100);
+    const missRows = res.misses
+      .slice(0, 12)
+      .map(
+        (m) => `<div class="miss">
+          <div class="mini-hand">${handHTML(m.cards)}</div>
+          <div>${BJ.describeHand(m.cards)} vs <b>${BJ.upLabel(m.up)}</b><div class="muted" style="font-size:13px">You chose ${BJ.ACTIONS[m.chosen].name}</div></div>
+          ${BJ.UI.actionTag(m.best)}
+        </div>`
+      )
+      .join('');
+    return `<div class="panel result-card">
+      ${opts.eyebrow ? `<div class="eyebrow">${opts.eyebrow}</div>` : ''}
+      ${opts.stars != null ? BJ.UI.stars(opts.stars) : ''}
+      <div class="big">${opts.bigText || pct + '%'}</div>
+      <p class="muted">${opts.subText || `${res.correct} of ${res.n} correct`}</p>
+      ${opts.message ? `<p style="max-width:52ch">${opts.message}</p>` : ''}
+      ${missRows ? `<div class="miss-list"><p class="muted" style="font-size:14px">Review these hands:</p>${missRows}</div>` : ''}
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px">${opts.buttons || ''}</div>
+    </div>`;
+  }
+
+  BJ.genSituation = genSituation;
+  BJ.Trainer = Trainer;
+  BJ.resultsHTML = resultsHTML;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/learn.js */
+/* Learn view: a path of lessons, each followed by a quiz. */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+  const { $, el, handHTML, stars } = BJ.UI;
+  const CU = () => BJ.ChartUI;
+
+  // 'A♠' -> card
+  const mk = (s) => BJ.makeCard(s.slice(0, -1), s.slice(-1));
+  const cards = (list, cw = 40) => `<div class="mini-hand" style="--cw:${cw}px">${list.map((s) => BJ.cardHTML(mk(s))).join('')}</div>`;
+  const handEq = (list, label) => `<div class="mini-hand">${list.map((s) => BJ.cardHTML(mk(s))).join('')}<span class="eq">=</span><b>${label}</b></div>`;
+  const card = (ico, title, body, cls = '') => `<div class="lesson-card ${cls}"><h3><span class="ico">${ico}</span>${title}</h3>${body}</div>`;
+  const chart = (kind, rows) => `<div class="mini-chart">${CU().tableHTML(kind, { rows })}</div>`;
+
+  function bustBars() {
+    const ups = BJ.CHART.UPCARDS;
+    const vals = ups.map((u) => BJ.dealerDist(u).bust);
+    const max = Math.max(...vals);
+    return `<div class="bust-bars">${ups
+      .map((u, i) => `<div class="bar ${u >= 7 ? 'strong' : ''}"><span>${Math.round(vals[i] * 100)}%</span><i style="height:${(vals[i] / max) * 100}%"></i><b>${BJ.upLabel(u)}</b></div>`)
+      .join('')}</div>`;
+  }
+
+  const LEVELS = [
+    {
+      id: 'basics',
+      title: 'How Blackjack Works',
+      tag: 'Rules',
+      blurb: 'The goal, card values, soft vs hard, and how a round plays out.',
+      quiz: { type: 'totals', count: 10 },
+      lesson: () => [
+        card('🎯', 'The goal', `<p>Finish closer to 21 than the dealer <b>without going over</b>. You only play against the dealer, never the other players at the table.</p>`),
+        card('🂡', 'Card values', `<ul><li>2 to 9 count as their number</li><li>10, J, Q, K all count as <b>10</b></li><li>An Ace counts as <b>1 or 11</b>, whichever helps</li></ul>${cards(['K♠', '7♥', 'A♦'])}`),
+        card('🧮', 'Hard vs soft', `<p>A hand is <span class="hl-t">soft</span> when an Ace counts as 11. A soft hand can't bust with one more card.</p>${handEq(['A♠', '6♥'], 'Soft 17')}<p>If 11 would put you over 21, the Ace counts as 1 and the hand is <b>hard</b>.</p>${handEq(['A♠', '6♥', '9♣'], 'Hard 16')}`),
+        card('🔁', 'How a round goes', `<ol><li>Place your bet</li><li>You get two cards face up. The dealer gets one face up (the <b>upcard</b>) and one face down (the <b>hole card</b>)</li><li>With an Ace or 10 showing, the dealer peeks for blackjack</li><li>You play your hand</li><li>The dealer reveals the hole card and <b>must hit until 17</b>. At this table the dealer also hits soft 17</li></ol>`),
+        card('💰', 'Payouts', `<ul><li>Win: <b>1:1</b> (bet $10, win $10)</li><li>Blackjack (Ace + 10-value as your first two cards): <b class="hl-y">3:2</b> (bet $10, win $15)</li><li>Tie: <b>push</b>, you get your bet back</li></ul><p class="muted">Avoid tables that pay 6:5 for blackjack. That one rule adds about 1.4% to the house edge.</p>`),
+        card('🕹️', 'Your moves', `<ul><li><b>Hit</b>: take a card</li><li><b>Stand</b>: stop</li><li><b class="hl-g">Double</b>: double your bet and take exactly one card</li><li><b class="hl-t">Split</b>: turn a pair into two hands, each with its own bet</li><li><b>Insurance</b>: a side bet when the dealer shows an Ace. <b>Never take it.</b></li></ul>`),
+        card('🏛️', 'Why the house wins', `<p>You act first. If you bust, you lose, even if the dealer busts afterwards. That's the house's only edge. Perfect basic strategy cuts it to about <b>0.5%</b>.</p>`, 'tip wide'),
+      ],
+    },
+    {
+      id: 'hard-stiff',
+      title: 'Hard Totals: Hit or Stand',
+      tag: 'Hard 12–17',
+      blurb: 'The most common hands. Read the dealer, then decide.',
+      quiz: { filter: 'hard-stiff', count: 15 },
+      lesson: () => [
+        card('👀', 'Read the dealer first', `<p>Dealer upcards <span class="hl-g">2 to 6 are bust cards</span>. <b>7 to Ace are strong.</b> These are the dealer's odds of busting by upcard at this table:</p>${bustBars()}<p class="muted" style="font-size:13px">There is a cliff between 6 and 7. That cliff is why most of the chart flips at the 7 column.</p>`, 'wide'),
+        card('🪨', 'Stiff hands: 13 to 16', `<p>Against <span class="hl-g">2 to 6</span>: <b class="hl-y">stand</b>. Let the dealer take the risk of busting.</p><p>Against <b>7 to Ace</b>: <b>hit</b>. The dealer will usually make 17+, so standing loses.</p>`),
+        card('⚠️', '12 is the exception', `<p>Stand on 12 only against <b>4, 5 and 6</b>. Hit against 2 and 3.</p><p class="muted">Only 10-value cards bust a 12, and a dealer 2 or 3 isn't weak enough.</p>`),
+        card('🧱', 'The easy rows', `<p><b>Hard 17 or more:</b> always stand.<br><b>Hard 8 or less:</b> always hit. You can't bust.</p>`),
+        card('💡', 'Common mistake', `<p>"I'll stand on 16 vs 10 because I might bust." Standing on 16 against a 10 wins less than hitting. You're the underdog either way, so make the play that loses least.</p>`, 'tip'),
+        `<div class="lesson-card wide"><h3><span class="ico">▦</span>The chart rows</h3>${chart('hard', [17, 16, 15, 14, 13, 12])}</div>`,
+      ],
+    },
+    {
+      id: 'hard-double',
+      title: 'Hard Totals: When to Double',
+      tag: 'Hard 8–11',
+      blurb: 'Put more money out when you are the favourite.',
+      quiz: { filter: 'hard-double', count: 12, threeCard: true },
+      lesson: () => [
+        card('✌️', 'Why double?', `<p>When you're likely to win, you want more money on the table. Doubling doubles your bet, and you get <b>exactly one card</b>.</p>`),
+        card('1️⃣', '11: always double', `<p>Double 11 against <b>every</b> upcard, even an Ace. It's the best doubling hand in the game.</p>${handEq(['6♠', '5♥'], '11')}`),
+        card('🔟', '10: double vs 2 to 9', `<p>Double against 2 to 9. Against a <b>10 or Ace</b>, just hit. The dealer's card is as strong as yours.</p>`),
+        card('9️⃣', '9: double vs 3 to 6', `<p>Double 9 only against the weak cards <b>3 to 6</b>. Hit against 2 and against 7 to Ace.</p>`),
+        card('📏', 'The "D" code', `<p><b class="hl-g">D</b> means <i>double if allowed, otherwise hit</i>. You can only double on your <b>first two cards</b>, so a 3-card 11 is just a hit.</p>${handEq(['2♣', '4♦', '5♠'], '11 → Hit')}`, 'tip'),
+        `<div class="lesson-card wide"><h3><span class="ico">▦</span>The chart rows</h3>${chart('hard', [11, 10, 9, 8])}</div>`,
+      ],
+    },
+    {
+      id: 'soft',
+      title: 'Soft Totals',
+      tag: 'A,2 – A,9',
+      blurb: "Hands with an Ace counted as 11. They can't bust, so you can be aggressive.",
+      quiz: { filter: 'soft', count: 15, threeCard: true },
+      lesson: () => [
+        card('🛡️', "Why soft hands are special", `<p>A soft hand <b>can't bust with one card</b>. That makes it perfect for doubling against a weak dealer.</p>`),
+        card('🏆', 'Soft 19 and 20: stand', `<p>A,9 always stands. A,8 stands too, <b>except vs 6</b>: <span class="hl-t">Ds</span>, double if you can, otherwise stand.</p>`),
+        card('🎢', 'Soft 18 (A,7): the tricky one', `<ul><li>vs <span class="hl-g">2 to 6</span>: <b class="hl-t">Ds</b>, double, or stand if you can't</li><li>vs <b>7 or 8</b>: <b class="hl-y">stand</b></li><li>vs <b>9, 10, A</b>: <b>HIT</b>. 18 is an underdog here</li></ul>`),
+        card('🚫', 'Soft 17 (A,6)', `<p>Double vs <b>3 to 6</b>, otherwise hit. <b>Never stand on soft 17.</b></p>`),
+        card('🪜', 'The doubling window grows', `<ul><li>A,2 and A,3: double vs <b>5–6</b></li><li>A,4 and A,5: double vs <b>4–6</b></li><li>A,6: double vs <b>3–6</b></li><li>A,7: double vs <b>2–6</b></li></ul><p class="muted">Otherwise hit, except A,7, which stands vs 7–8.</p>`, 'tip'),
+        card('📏', 'D vs Ds', `<p><b class="hl-g">D</b>: double, otherwise <b>hit</b>. <b class="hl-t">Ds</b>: double, otherwise <b>stand</b>.</p><p>A 3-card soft 18 vs 4 can't double, so it stands.</p>${handEq(['A♣', '3♦', '4♠'], 'Soft 18')}`),
+        `<div class="lesson-card wide"><h3><span class="ico">▦</span>The chart</h3>${chart('soft')}</div>`,
+      ],
+    },
+    {
+      id: 'pairs',
+      title: 'Pair Splitting',
+      tag: 'Pairs',
+      blurb: 'When to turn one hand into two.',
+      quiz: { filter: 'pairs', count: 15 },
+      lesson: () => [
+        card('✅', 'Always split', `<p><b>A,A</b> and <b>8,8</b>, against everything.</p>${cards(['A♠', 'A♥'])}${cards(['8♣', '8♦'])}<p class="muted">16 is the worst hand in blackjack. Two hands starting with 8 lose far less.</p>`),
+        card('⛔', 'Never split', `<p><b>10,10</b>: you already have 20.<br><b>5,5</b>: play it as hard 10 and double vs 2–9.</p>${cards(['K♠', 'Q♥'])}`),
+        card('9️⃣', '9,9', `<p>Split vs <b>2–6, 8, 9</b>. <b class="hl-y">Stand</b> vs <b>7</b> (your 18 beats the dealer's likely 17), and vs <b>10 and A</b>.</p>`),
+        card('7️⃣', '7,7 and 6,6', `<p><b>7,7</b>: split vs 2–7.<br><b>6,6</b>: split vs 3–6, and vs 2 only with DAS.</p>`),
+        card('🔢', '2,2 · 3,3 · 4,4', `<p><b>2,2 and 3,3</b>: split vs 4–7, and vs 2–3 only with DAS.<br><b>4,4</b>: split only vs 5–6 with DAS.</p>`),
+        card('📏', 'What Y/N means', `<p><b class="hl-t">Y/N</b> = split only if the casino lets you <b>double after splitting</b> (DAS). This table allows DAS, so Y/N means split. Turn DAS off in Drill to practise the other version.</p>`, 'tip'),
+        `<div class="lesson-card wide"><h3><span class="ico">▦</span>The chart</h3>${chart('pairs')}</div>`,
+      ],
+    },
+    {
+      id: 'tough',
+      title: 'Insurance & Tough Hands',
+      tag: 'Tricky spots',
+      blurb: 'The hands players get wrong most, and the side bet to always refuse.',
+      quiz: { filter: 'tough', count: 12 },
+      lesson: () => [
+        card('🛑', 'Never take insurance', `<p>Insurance pays 2:1 if the dealer's hole card is a 10. Only 4 of 13 cards are 10-value, so you lose that bet 9 times in 13. That's about <b>−7.7%</b> per insurance bet. "Even money" on your blackjack is the same bet in disguise.</p>`),
+        card('🪨', '16 vs 9, 10, A: hit', `<p>There's no surrender at European tables, so you play the worst hands out. <b>Hard 16</b> against <b>9, 10 or Ace</b>, and <b>hard 15</b> against <b>10</b>: hit. You're the underdog either way, but hitting loses less than standing.</p>`),
+        card('8️⃣', 'Split 8s, even vs 10 and A', `<p>8,8 makes 16, the worst total in the game. Two hands that start with 8 lose far less, so split them against every upcard.</p>${cards(['8♠', '8♥'])}`),
+        card('🎢', 'Soft 18 vs 9, 10, A: hit', `<p>The most-missed hand in blackjack. 18 feels safe, but it's an underdog against a 9, 10 or Ace, and a soft hand can't bust with one more card.</p>${handEq(['A♣', '7♦'], 'Soft 18')}`),
+        card('⚠️', '12 vs 2 and 3: hit', `<p>Only 4, 5 and 6 are weak enough to stand on 12. Against a 2 or 3, take a card.</p>`),
+        card('🧭', 'The order of decisions', `<ol><li><b>Pair?</b> Check the splitting table first</li><li><b>Double?</b> Only on your first two cards</li><li><b>Otherwise</b> hit or stand</li></ol>`, 'tip'),
+        `<div class="lesson-card wide"><h3><span class="ico">▦</span>The chart rows</h3>${chart('hard', [16, 15, 12])}${chart('soft', [18])}</div>`,
+      ],
+    },
+    {
+      id: 'exam',
+      title: 'Final Exam',
+      tag: 'Everything',
+      blurb: '30 hands from the whole chart, including 3-card hands. Score 90% to master it.',
+      quiz: { filter: 'all', count: 30, threeCard: true, pass: 0.9 },
+      lesson: () => [
+        card('🎓', 'Everything at once', `<p>30 hands from every part of the chart, including 3-card hands where you can't double or split.</p><p>Remember the order: <b>split → double → hit/stand</b>.</p>`),
+        card('⭐', 'Scoring', `<ul><li>★ 80%+</li><li>★★ 90%+</li><li>★★★ a perfect 30/30</li></ul>`),
+        card('🃏', 'Then take a seat', `<p>Once you pass, take what you learned to the <b>Table</b> and play real rounds with the coach on.</p>`, 'tip'),
+      ],
+    },
+  ];
+
+  const starsFor = (acc) => (acc >= 1 ? 3 : acc >= 0.9 ? 2 : acc >= 0.8 ? 1 : 0);
+
+  // ---------- Totals quiz (Level 1) ----------
+  class TotalsQuiz {
+    constructor(root, cfg) {
+      this.root = root;
+      this.cfg = cfg;
+      this.n = 0;
+      this.correct = 0;
+      this.misses = [];
+    }
+    start() {
+      this.next();
+    }
+    makeHand() {
+      for (;;) {
+        const len = BJ.pick([2, 2, 3, 3, 4]);
+        const hasAce = Math.random() < 0.6;
+        const cs = [];
+        if (hasAce) cs.push(BJ.cardOfValue(1));
+        while (cs.length < len) cs.push(BJ.cardOfValue(1 + BJ.rand(10)));
+        const h = BJ.handInfo(cs);
+        if (h.total <= 21 && h.total >= 5) return cs;
+      }
+    }
+    next() {
+      if (this.n >= this.cfg.count) return this.cfg.onFinish({ n: this.n, correct: this.correct, acc: this.correct / this.n, misses: [] });
+      const cs = this.makeHand();
+      const h = BJ.handInfo(cs);
+      const hasAce = cs.some((c) => c.v === 1);
+      const label = (t, s) => (s ? `Soft ${t}` : `Hard ${t}`);
+      const right = h.blackjack ? 'Blackjack' : label(h.total, h.soft);
+      const cand = [];
+      if (h.blackjack) cand.push('Hard 11', 'Hard 21', 'Soft 11');
+      else if (h.soft) cand.push(label(h.total - 10, false), label(h.total, false));
+      else if (hasAce) cand.push(label(h.total, true), 'Bust');
+      cand.push(label(h.total, !h.soft), label(h.total + 1, h.soft), label(h.total - 1, h.soft), label(h.total + 2, false));
+      const opts = new Set([right]);
+      for (const c of cand) {
+        if (opts.size >= 4) break;
+        const t = Number(c.split(' ')[1]);
+        if (c === 'Bust' || (t >= 2 && t <= 21)) opts.add(c);
+      }
+      for (let k = 3; opts.size < 4; k++) opts.add(label(Math.max(2, h.total - k), false));
+      const list = Array.from(opts);
+      for (let i = list.length - 1; i > 0; i--) {
+        const j = BJ.rand(i + 1);
+        [list[i], list[j]] = [list[j], list[i]];
+      }
+      this.root.innerHTML = `<div class="trainer">
+        <div class="trainer-bar"><div class="stat-row"><span class="stat-pill">Hand <b>${this.n + 1}</b>/${this.cfg.count}</span><span class="stat-pill">Correct <b>${this.correct}</b></span></div><button class="btn sm ghost" data-r="exit">Back to lesson</button></div>
+        <div class="progress"><span style="width:${(this.n / this.cfg.count) * 100}%"></span></div>
+        <div class="felt" style="display:grid;place-items:center;min-height:220px"><div class="seat"><div class="seat-label">What is this hand?</div><div class="hand">${handHTML(cs, { animate: true, stagger: 70 })}</div></div></div>
+        <div class="choice-grid">${list.map((o) => `<button class="choice" data-o="${o}">${o}</button>`).join('')}</div>
+        <div data-r="fb"></div></div>`;
+      this.root.querySelector('[data-r="exit"]').onclick = () => this.cfg.onExit();
+      this.answered = false;
+      this.root.querySelector('.choice-grid').onclick = (e) => {
+        const b = e.target.closest('.choice');
+        if (!b || this.answered) return;
+        this.answered = true;
+        const ok = b.dataset.o === right;
+        this.n++;
+        if (ok) this.correct++;
+        BJ.UI.$$('.choice', this.root).forEach((x) => {
+          x.disabled = true;
+          if (x.dataset.o === right) x.classList.add('right');
+          else if (x === b) x.classList.add('wrong');
+        });
+        const why = h.soft
+          ? `The Ace counts as 11 without busting, so this is soft ${h.total}. It can't bust with one more card.`
+          : cs.some((c) => c.v === 1)
+            ? `Counting the Ace as 11 would make ${h.total + 10} and bust, so it counts as 1: hard ${h.total}.`
+            : `No Ace, so it's a hard total: ${cs.map((c) => c.v).join(' + ')} = ${h.total}.`;
+        this.root.querySelector('[data-r="fb"]').innerHTML = `<div class="feedback ${ok ? '' : 'bad'}"><div class="fb-head"><div class="fb-icon">${ok ? '✓' : '✕'}</div><div><div class="fb-title">${h.blackjack ? 'Blackjack! Ace + 10-value on two cards.' : right}</div><div class="fb-sub">${h.blackjack ? 'Pays 3:2' : why}</div></div></div><div class="fb-foot"><span></span><button class="btn primary" data-r="next">Next<kbd>Enter</kbd></button></div></div>`;
+        this.root.querySelector('[data-r="next"]').onclick = () => this.next();
+      };
+    }
+    onKey(e) {
+      if (this.answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        this.next();
+      } else if (!this.answered && /^[1-4]$/.test(e.key)) {
+        const b = BJ.UI.$$('.choice', this.root)[+e.key - 1];
+        if (b) b.click();
+      }
+    }
+    destroy() {}
+  }
+
+  // ---------- View ----------
+  const LearnView = {
+    init(root) {
+      this.root = root;
+      this.active = null;
+    },
+    onShow(params) {
+      if (params && params.level) this.openLesson(params.level);
+      else if (!this.active) this.renderList();
+    },
+    onHide() {},
+    progress() {
+      return BJ.Stats.data.levels;
+    },
+    renderList() {
+      this.stopQuiz();
+      this.active = null;
+      const prog = this.progress();
+      const passed = LEVELS.filter((l) => (prog[l.id] || {}).stars >= 1).length;
+      const nextLevel = LEVELS.find((l) => !((prog[l.id] || {}).stars >= 1));
+      const d = BJ.Stats.data;
+      const acc = d.total.n ? Math.round((d.total.c / d.total.n) * 100) + '%' : '—';
+      this.root.innerHTML = `
+        <div class="learn-hero">
+          <div class="hero-card">
+            <div class="eyebrow" style="color:#7ff0c3">Blackjack Strategy Trainer</div>
+            <h1>Learn to play every hand perfectly.</h1>
+            <p>Perfect basic strategy cuts the casino's edge to about 0.5%. Learn the chart one section at a time, drill it until it's automatic, then play real rounds with a coach watching every decision.</p>
+            <button class="btn primary lg" id="continue">${nextLevel ? (passed ? 'Continue: ' : 'Start: ') + nextLevel.title : 'Practise weak spots'} →</button>
+            <div class="hero-cards">${BJ.cardHTML(mk('A♠'))}${BJ.cardHTML(mk('K♥'))}</div>
+          </div>
+          <div class="hero-stats">
+            <div class="kpi"><span class="k">Lessons passed</span><span class="v">${passed}<small>/${LEVELS.length}</small></span></div>
+            <div class="kpi"><span class="k">Overall accuracy</span><span class="v">${acc}</span></div>
+            <div class="kpi"><span class="k">Decisions made</span><span class="v">${d.total.n.toLocaleString()}</span></div>
+            <div class="kpi"><span class="k">Best drill streak</span><span class="v">${d.bestStreak}</span></div>
+          </div>
+        </div>
+        <div class="page-head" style="margin-bottom:14px"><div><h2 style="font-size:22px">Your path</h2></div></div>
+        <div class="levels">${LEVELS.map((l, i) => {
+          const p = prog[l.id] || {};
+          const cls = p.stars >= 1 ? 'passed' : nextLevel && nextLevel.id === l.id ? 'next' : '';
+          return `<button class="level ${cls}" data-id="${l.id}">
+            <div class="level-num">${p.stars >= 1 ? '✓' : i + 1}</div>
+            <div><h3>${l.title}<span class="level-tag">${l.tag}</span></h3><p>${l.blurb}${p.best != null ? ` · Best ${Math.round(p.best * 100)}%` : ''}</p></div>
+            ${stars(p.stars || 0)}
+          </button>`;
+        }).join('')}</div>`;
+      $('#continue', this.root).onclick = () => (nextLevel ? this.openLesson(nextLevel.id) : BJ.App.go('drill', { filter: 'weak' }));
+      this.root.querySelector('.levels').onclick = (e) => {
+        const b = e.target.closest('.level');
+        if (b) this.openLesson(b.dataset.id);
+      };
+    },
+    openLesson(id) {
+      this.stopQuiz();
+      const l = LEVELS.find((x) => x.id === id);
+      if (!l) return this.renderList();
+      this.active = l;
+      const i = LEVELS.indexOf(l);
+      const p = this.progress()[l.id] || {};
+      this.root.innerHTML = `
+        <div class="lesson-head">
+          <button class="btn sm ghost" id="back">← All lessons</button>
+          <span class="muted">Lesson ${i + 1} of ${LEVELS.length}</span>
+        </div>
+        <div class="page-head">
+          <div><div class="eyebrow">${l.tag}</div><h1>${l.title}</h1><p>${l.blurb}</p></div>
+          <div style="display:flex;gap:12px;align-items:center">${stars(p.stars || 0)}<button class="btn primary lg" id="quiz">Take the quiz (${l.quiz.count} hands)</button></div>
+        </div>
+        <div class="lesson-grid">${l.lesson().join('')}</div>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+          <button class="btn primary lg" id="quiz2">I'm ready: start the quiz</button>
+        </div>`;
+      window.scrollTo({ top: 0 });
+      $('#back', this.root).onclick = () => this.renderList();
+      $('#quiz', this.root).onclick = $('#quiz2', this.root).onclick = () => this.startQuiz(l);
+    },
+    startQuiz(l) {
+      this.stopQuiz();
+      window.scrollTo({ top: 0 });
+      this.root.innerHTML = `<div class="lesson-head"><span class="eyebrow" style="margin:0">Quiz · ${l.title}</span></div><div id="quiz-root"></div>`;
+      const qroot = $('#quiz-root', this.root);
+      const onFinish = (res) => this.showResult(l, res);
+      const onExit = () => this.openLesson(l.id);
+      if (l.quiz.type === 'totals') this.quiz = new TotalsQuiz(qroot, { count: l.quiz.count, onFinish, onExit });
+      else
+        this.quiz = new BJ.Trainer(qroot, {
+          filter: l.quiz.filter,
+          count: l.quiz.count,
+          threeCard: !!l.quiz.threeCard,
+          das: true,
+          source: 'lesson',
+          onFinish,
+          onExit,
+          exitLabel: 'Back to lesson',
+        });
+      this.quiz.start();
+    },
+    showResult(l, res) {
+      const st = starsFor(res.acc);
+      const prog = this.progress();
+      const prev = prog[l.id] || {};
+      prog[l.id] = { best: Math.max(prev.best || 0, res.acc), stars: Math.max(prev.stars || 0, st) };
+      BJ.Stats.save();
+      this.stopQuiz();
+      const i = LEVELS.indexOf(l);
+      const next = LEVELS[i + 1];
+      const passed = st >= 1;
+      const msg = passed
+        ? st === 3
+          ? 'Perfect. That section of the chart is yours.'
+          : 'Passed. Go for three stars, or move on and come back later.'
+        : 'Not quite there yet. Re-read the lesson cards and try again. You need 80% to pass.';
+      this.root.innerHTML = BJ.resultsHTML(res, {
+        eyebrow: l.title,
+        stars: st,
+        message: msg,
+        buttons: `<button class="btn" id="retry">Try again</button><button class="btn" id="lesson">Review lesson</button>${passed && next ? `<button class="btn primary" id="next">Next: ${next.title} →</button>` : ''}${passed && !next ? `<button class="btn primary" id="table">Take a seat at the table →</button>` : ''}`,
+      });
+      $('#retry', this.root).onclick = () => this.startQuiz(l);
+      $('#lesson', this.root).onclick = () => this.openLesson(l.id);
+      if ($('#next', this.root)) $('#next', this.root).onclick = () => this.openLesson(next.id);
+      if ($('#table', this.root)) $('#table', this.root).onclick = () => BJ.App.go('table');
+      window.scrollTo({ top: 0 });
+    },
+    stopQuiz() {
+      if (this.quiz) this.quiz.destroy();
+      this.quiz = null;
+    },
+    onKey(e) {
+      if (this.quiz) this.quiz.onKey(e);
+    },
+  };
+
+  BJ.LEVELS = LEVELS;
+  BJ.LearnView = LearnView;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/drill.js */
+/* Drill view: endless practice, focus filters, weak-spot mode and 60-second speed rounds. */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+  const { $, $$ } = BJ.UI;
+
+  const FOCUS = [
+    ['all', 'Everything'],
+    ['hard', 'Hard totals'],
+    ['soft', 'Soft totals'],
+    ['pairs', 'Pairs'],
+    ['tough', 'Tough hands'],
+    ['weak', 'My weak spots'],
+  ];
+
+  const DrillView = {
+    init(root) {
+      this.root = root;
+      this.mode = 'practice';
+      this.filter = 'all';
+      this.cell = null;
+      this.threeCard = true;
+      root.innerHTML = `
+        <div class="page-head compact">
+          <div><div class="eyebrow">Practice</div><h1>Drill</h1>
+          <p>Rapid-fire hands. Make the play, get the reason. Keys: <b>H</b> hit · <b>S</b> stand · <b>D</b> double · <b>P</b> split · <b>Enter</b> next.</p></div>
+          <div class="seg" data-r="mode"><button data-m="practice" class="on">Practice</button><button data-m="speed">Speed round · 60s</button></div>
+        </div>
+        <div class="panel drill-panel" style="margin-bottom:16px;display:grid;gap:14px">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="chips" data-r="focus" style="flex:1;min-width:0"></div>
+            <button class="chip mobile-only" data-r="optbtn" style="flex:none">Options</button>
+          </div>
+          <div class="drill-opts" data-r="opts" style="display:flex;gap:14px 20px;flex-wrap:wrap">
+            <label class="toggle"><input type="checkbox" data-r="three"> 3-card hands</label>
+            <label class="toggle"><input type="checkbox" data-r="das"> Double after split</label>
+            <label class="toggle"><input type="checkbox" data-r="auto"> Auto-advance when correct</label>
+          </div>
+        </div>
+        <div data-r="stage"></div>`;
+      this.r = (k) => root.querySelector(`[data-r="${k}"]`);
+      const s = BJ.Stats.data.settings;
+      const bind = (k, get, set) => {
+        const i = this.r(k);
+        i.checked = get();
+        i.addEventListener('change', () => {
+          set(i.checked);
+          BJ.Stats.save();
+          this.restart();
+        });
+      };
+      bind('three', () => this.threeCard, (v) => (this.threeCard = v));
+      bind('das', () => s.das, (v) => (s.das = v));
+      bind('auto', () => s.autoNext, (v) => (s.autoNext = v));
+      this.r('optbtn').addEventListener('click', () => {
+        const open = this.r('opts').classList.toggle('open');
+        this.r('optbtn').classList.toggle('on', open);
+      });
+      this.r('mode').addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        this.mode = b.dataset.m;
+        this.restart();
+      });
+      this.r('focus').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-f]');
+        if (!b) return;
+        if (b.dataset.f === 'clear-cell') this.cell = null;
+        else {
+          this.filter = b.dataset.f;
+          this.cell = null;
+        }
+        this.restart();
+      });
+    },
+    onShow(params) {
+      if (params && params.cell) {
+        this.cell = params.cell;
+        this.mode = 'practice';
+      }
+      if (params && params.filter) {
+        this.filter = params.filter;
+        this.cell = null;
+      }
+      if (params || !this.trainer) this.restart();
+    },
+    onHide() {
+      if (this.trainer && this.trainer.speed) this.stop();
+    },
+    stop() {
+      if (this.trainer) this.trainer.destroy();
+      this.trainer = null;
+    },
+    renderFocus() {
+      const chips = FOCUS.map(([k, l]) => `<button class="chip ${!this.cell && this.filter === k ? 'on' : ''}" data-f="${k}">${l}</button>`);
+      if (this.cell) {
+        const c = this.cell;
+        chips.unshift(`<button class="chip on" data-f="clear-cell">${BJ.ChartUI.TITLES[c.kind]}: ${BJ.ChartUI.rowLabel(c.kind, c.row)} vs ${BJ.upLabel(c.up)} ✕</button>`);
+      }
+      this.r('focus').innerHTML = chips.join('');
+      $$('button', this.r('mode')).forEach((b) => b.classList.toggle('on', b.dataset.m === this.mode));
+    },
+    cfg() {
+      const s = BJ.Stats.data.settings;
+      return { filter: this.filter, cell: this.cell, threeCard: this.threeCard, das: s.das, source: 'drill' };
+    },
+    restart() {
+      this.stop();
+      this.renderFocus();
+      const stage = this.r('stage');
+      if (this.mode === 'speed') {
+        const best = BJ.Stats.data.speedBest;
+        stage.innerHTML = `<div class="panel result-card">
+          <div class="eyebrow">Speed round</div>
+          <div class="big">60s</div>
+          <p class="muted" style="max-width:46ch">Get as many correct decisions as you can in 60 seconds. A wrong answer shows the right play for a moment, so accuracy beats button-mashing.</p>
+          <p>Personal best: <b>${best}</b></p>
+          <button class="btn primary lg" data-r="go">Start<kbd>Enter</kbd></button></div>`;
+        this.waitingStart = true;
+        this.r('go').onclick = () => this.startSpeed();
+        return;
+      }
+      this.waitingStart = false;
+      this.trainer = new BJ.Trainer(stage, this.cfg());
+      this.trainer.start();
+    },
+    startSpeed() {
+      this.waitingStart = false;
+      const stage = this.r('stage');
+      this.trainer = new BJ.Trainer(stage, {
+        ...this.cfg(),
+        timeLimit: 60,
+        onFinish: (res) => {
+          const prev = BJ.Stats.data.speedBest;
+          const record = res.correct > prev;
+          if (record) {
+            BJ.Stats.data.speedBest = res.correct;
+            BJ.Stats.save();
+          }
+          stage.innerHTML = BJ.resultsHTML(res, {
+            eyebrow: record ? 'New personal best!' : 'Speed round',
+            bigText: String(res.correct),
+            subText: `correct decisions · ${Math.round(res.acc * 100)}% accuracy · best ${Math.max(prev, res.correct)}`,
+            buttons: `<button class="btn primary" data-r="again">Go again<kbd>Enter</kbd></button>${res.misses.length ? '<button class="btn" data-r="weak">Drill my weak spots</button>' : ''}`,
+          });
+          this.trainer = null;
+          this.waitingStart = true;
+          this.r('again').onclick = () => this.startSpeed();
+          if (this.r('weak'))
+            this.r('weak').onclick = () => {
+              this.mode = 'practice';
+              this.filter = 'weak';
+              this.restart();
+            };
+        },
+      });
+      this.trainer.start();
+    },
+    onKey(e) {
+      if (this.waitingStart && (e.key === 'Enter' || e.key === ' ') && !BJ.UI.ignoreKey(e)) {
+        e.preventDefault();
+        return this.startSpeed();
+      }
+      if (this.trainer) this.trainer.onKey(e);
+    },
+  };
+
+  BJ.DrillView = DrillView;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/table.js */
+/* Table view: full blackjack rounds against the dealer with a strategy coach. */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+  const { $, $$, handHTML, totalBadge, money, signed } = BJ.UI;
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const CHIPS = [
+    { v: 5, color: '#c8343f' },
+    { v: 25, color: '#1d9a5c' },
+    { v: 100, color: '#23272c' },
+    { v: 500, color: '#7a3fb8' },
+  ];
+  const chipColor = (amt) => (amt >= 500 ? '#7a3fb8' : amt >= 100 ? '#23272c' : amt >= 25 ? '#1d9a5c' : '#c8343f');
+  const shortAmt = (n) => (n >= 1000 ? (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'k' : String(n));
+  const COACH = [
+    ['strict', 'Strict', 'Wrong plays are blocked until you make the right one.'],
+    ['feedback', 'Feedback', 'Play anything. The coach tells you when you deviate.'],
+    ['hints', 'Hints', 'The correct play is highlighted before you act.'],
+    ['off', 'Off', 'No help. Your accuracy is still tracked.'],
+  ];
+
+  const TableView = {
+    init(root) {
+      this.root = root;
+      const s = BJ.Stats.data;
+      this.game = new BJ.TableGame({ bankroll: s.table.bankroll, rules: { das: s.settings.das, surrender: false } });
+      this.bet = 0;
+      this.lastBet = 25;
+      this.seen = new Set();
+      this.flip = new Set();
+      this.dealerShown = 0;
+      this.holeShown = false;
+      this.resultsShown = false;
+      this.busy = false;
+      this.session = { start: this.game.bankroll, n: 0, c: 0, rounds: 0 };
+      this.coachMsg = null;
+      this.build();
+    },
+    onShow() {
+      this.render();
+    },
+    build() {
+      this.root.innerHTML = `
+        <div class="page-head compact">
+          <div><div class="eyebrow">Play</div><h1>The Table</h1>
+          <p>Real rounds against the dealer: a 6-deck shoe and the rules the strategy chart was built for. The coach checks every decision against basic strategy.</p></div>
+        </div>
+        <div class="table-layout">
+          <div class="table-main">
+            <div class="felt table-felt">
+              <div class="table-top">
+                <div><div class="mobile-only felt-bank" data-r="feltbank"></div><div class="shoe-meter" data-r="shoe"></div></div>
+                <div class="seat"><div class="seat-label">Dealer</div><div class="hand" data-r="dealer"></div><span data-r="dtotal"></span></div>
+                <div class="shoe-meter" style="justify-self:end;text-align:right" data-r="countmini"></div>
+              </div>
+              <div style="display:grid;gap:10px;align-content:center">
+                <div class="felt-rules" data-r="feltrules"></div>
+                <div class="felt-msg" data-r="msg"></div>
+                <div class="felt-coach mobile-only" data-r="feltcoach"></div>
+              </div>
+              <div class="player-hands" data-r="hands"></div>
+            </div>
+            <div class="controls" style="margin-top:14px">
+              <div data-r="betting" class="panel"></div>
+              <div data-r="insurance" class="hidden"></div>
+              <div data-r="actions" class="hidden"></div>
+            </div>
+          </div>
+          <aside class="side">
+            <div class="panel">
+              <h4>Bankroll</h4>
+              <div class="bankroll" data-r="bankroll"></div>
+              <div class="kv"><span>This session</span><b data-r="sessnet"></b></div>
+              <div class="kv"><span>Rounds this session</span><b data-r="sessrounds"></b></div>
+              <div class="kv"><span>Strategy accuracy (session)</span><b data-r="sessacc"></b></div>
+            </div>
+            <div class="panel">
+              <h4>Coach</h4>
+              <div class="seg" data-r="coachmode" style="margin-bottom:10px;flex-wrap:wrap">${COACH.map(([k, l]) => `<button data-k="${k}">${l}</button>`).join('')}</div>
+              <p class="muted" style="font-size:13px;margin-bottom:10px" data-r="coachdesc"></p>
+              <div class="coach-msg" data-r="coach"></div>
+            </div>
+            <div class="panel">
+              <h4>Card count (Hi-Lo)</h4>
+              <label class="toggle" style="margin-bottom:10px"><input type="checkbox" data-r="showcount"> Show the count</label>
+              <div class="count-box" data-r="count"></div>
+            </div>
+            <div class="panel">
+              <h4>House rules</h4>
+              <div style="display:grid;gap:10px">
+                <label class="toggle"><input type="checkbox" data-r="das"> Double after split (DAS)</label>
+              </div>
+              <p class="muted" style="font-size:13px;margin-top:10px">6 decks · Dealer hits soft 17 · Blackjack pays 3:2 · No surrender · Split to 4 hands · Split Aces get one card. Changes apply from the next hand.</p>
+              <button class="btn sm" style="margin-top:12px" data-r="reset">Reset bankroll to $1,000</button>
+            </div>
+          </aside>
+        </div>`;
+      this.r = (k) => this.root.querySelector(`[data-r="${k}"]`);
+      this.bar = BJ.UI.actionBar(this.r('actions'), (a) => this.play(a));
+
+      const settings = BJ.Stats.data.settings;
+      this.r('coachmode').addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        settings.coach = b.dataset.k;
+        BJ.Stats.save();
+        this.coachMsg = null;
+        this.render();
+      });
+      const sc = this.r('showcount');
+      sc.checked = settings.showCount;
+      sc.addEventListener('change', () => {
+        settings.showCount = sc.checked;
+        BJ.Stats.save();
+        this.renderSide();
+      });
+      const das = this.r('das');
+      das.checked = settings.das;
+      das.addEventListener('change', () => {
+        settings.das = das.checked;
+        BJ.Stats.save();
+        BJ.UI.toast(`Double after split ${das.checked ? 'on' : 'off'}: applies from the next hand`);
+      });
+      this.r('feltcoach').addEventListener('click', () => this.r('coach').scrollIntoView({ behavior: 'smooth', block: 'center' }));
+      this.r('reset').addEventListener('click', () => {
+        if (this.game.phase === 'player' || this.game.phase === 'insurance' || this.busy) return BJ.UI.toast('Finish this hand first');
+        this.game.bankroll = 1000;
+        this.session.start = 1000;
+        BJ.Stats.data.table.bankroll = 1000;
+        BJ.Stats.save();
+        this.bet = Math.min(this.bet, 1000);
+        this.render();
+        BJ.UI.toast('Bankroll reset to $1,000');
+      });
+
+      this.r('betting').addEventListener('click', (e) => {
+        const chip = e.target.closest('[data-chip]');
+        if (chip) return this.addChip(+chip.dataset.chip);
+        const act = e.target.closest('[data-do]');
+        if (!act) return;
+        if (act.dataset.do === 'clear') {
+          this.bet = 0;
+          this.renderControls();
+        }
+        if (act.dataset.do === 'deal') this.deal();
+      });
+      this.r('insurance').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-ins]');
+        if (b) this.insurance(b.dataset.ins === 'yes');
+      });
+    },
+
+    get isBetting() {
+      const p = this.game.phase;
+      return !this.busy && (p === 'betting' || p === 'done');
+    },
+
+    addChip(v) {
+      if (!this.isBetting) return;
+      if (this.bet + v > this.game.bankroll) return BJ.UI.toast('Not enough in your bankroll');
+      this.bet += v;
+      this.renderControls();
+    },
+
+    async deal() {
+      if (!this.isBetting) return;
+      const g = this.game;
+      if (!this.bet) this.bet = Math.min(this.lastBet, g.bankroll);
+      if (this.bet < g.rules.minBet) return BJ.UI.toast('Minimum bet is $5');
+      if (this.bet > g.bankroll) return BJ.UI.toast('Not enough in your bankroll');
+      const s = BJ.Stats.data.settings;
+      g.rules.das = s.das;
+      g.rules.surrender = false;
+      this.lastBet = this.bet;
+      g.deal(this.bet);
+      if (g.shuffled) BJ.UI.toast('The cut card came out: new shoe shuffled');
+      this.coachMsg = null;
+      this.dealerShown = 2;
+      this.holeShown = false;
+      this.resultsShown = false;
+      this.flip.clear();
+      this.busy = true;
+      this.render();
+      await wait(450);
+      this.busy = false;
+      if (g.phase === 'done') await this.reveal();
+      else this.render();
+    },
+
+    insurance(take) {
+      const g = this.game;
+      if (g.phase !== 'insurance' || this.busy) return;
+      const mode = BJ.Stats.data.settings.coach;
+      if (take && mode === 'strict') {
+        BJ.Stats.recordInsurance(true);
+        this.session.n++;
+        this.coachMsg = { ok: false, title: 'Never take insurance', why: insuranceWhy() };
+        return this.render();
+      }
+      BJ.Stats.recordInsurance(take);
+      this.session.n++;
+      if (!take) this.session.c++;
+      this.coachMsg = take
+        ? { ok: false, title: 'Basic strategy: never take insurance', why: insuranceWhy() }
+        : mode !== 'off'
+          ? { ok: true, title: 'Correct: no insurance', why: 'Insurance loses about 7.7% per bet. Decline it every time.' }
+          : null;
+      g.resolveInsurance(take);
+      if (g.phase === 'done') this.reveal();
+      else this.render();
+    },
+
+    play(a) {
+      const g = this.game;
+      if (g.phase !== 'player' || this.busy) return;
+      const avail = g.available();
+      if (!avail[a]) return;
+      const rec = BJ.decide(g.hand.cards, g.up.v, g.strategyContext());
+      const ok = a === rec.action;
+      const mode = BJ.Stats.data.settings.coach;
+      BJ.Stats.record(rec, a, 'table');
+      this.session.n++;
+      if (ok) this.session.c++;
+      const exp = BJ.explain(rec);
+      if (!ok && mode === 'strict') {
+        this.coachMsg = { ok: false, title: `Not quite. Basic strategy says ${BJ.ACTIONS[rec.action].name}.`, why: exp.why, sub: exp.headline, rec };
+        this.bar.mark(a, rec.action);
+        const felt = this.root.querySelector('.table-felt');
+        felt.classList.remove('flash-bad');
+        void felt.offsetWidth;
+        felt.classList.add('flash-bad');
+        this.renderSide();
+        return;
+      }
+      if (mode === 'off') this.coachMsg = null;
+      else if (ok) this.coachMsg = { ok: true, title: `Correct: ${BJ.ACTIONS[a].name}`, why: mode === 'hints' ? '' : exp.why, sub: exp.headline };
+      else this.coachMsg = { ok: false, title: `Basic strategy says ${BJ.ACTIONS[rec.action].name}`, why: exp.why, sub: `You chose ${BJ.ACTIONS[a].name} · ${exp.headline}`, rec };
+      g.act(a);
+      if (g.phase === 'done') this.reveal();
+      else this.render();
+    },
+
+    async reveal() {
+      const g = this.game;
+      this.busy = true;
+      this.render();
+      if (!this.holeShown) {
+        await wait(350);
+        this.holeShown = true;
+        this.flip = new Set([g.dealer[1].id]);
+        this.render();
+        await wait(600);
+      }
+      while (this.dealerShown < g.dealer.length) {
+        this.dealerShown++;
+        this.render();
+        await wait(620);
+      }
+      this.resultsShown = true;
+      this.busy = false;
+      const st = BJ.Stats.data.table;
+      st.bankroll = g.bankroll;
+      st.rounds++;
+      st.net += g.roundNet;
+      BJ.Stats.save();
+      this.session.rounds++;
+      this.bet = Math.min(this.lastBet, Math.floor(g.bankroll));
+      if (g.bankroll < g.rules.minBet) this.bet = 0;
+      this.render();
+    },
+
+    // ---------- rendering ----------
+    render() {
+      this.renderFelt();
+      this.renderControls();
+      this.renderSide();
+    },
+
+    renderFelt() {
+      const g = this.game;
+      const rules = BJ.Stats.data.settings;
+      this.r('feltrules').textContent = `Blackjack pays 3 to 2 · Dealer hits soft 17 · ${rules.das ? 'Double after split' : 'No double after split'} · Insurance pays 2 to 1`;
+
+      const dCards = g.dealer.slice(0, this.dealerShown);
+      this.r('dealer').innerHTML = dCards.length
+        ? handHTML(dCards, { hideSecond: !this.holeShown, animate: this.seen, flipIds: this.flip, stagger: 240, delayBase: this.holeShown ? 0 : 120 })
+        : `<div class="card back" style="opacity:.12"></div>`;
+      this.flip.clear();
+      this.r('dtotal').innerHTML = !dCards.length
+        ? '<span class="total-badge">Waiting</span>'
+        : this.holeShown
+          ? totalBadge(dCards, { plain: true })
+          : `<span class="total-badge">Shows ${BJ.upLabel(BJ.toUp(g.up.v))}</span>`;
+
+      const handsEl = this.r('hands');
+      handsEl.classList.toggle('multi', g.hands.length > 1);
+      if (!g.hands.length) {
+        handsEl.innerHTML = `<div class="p-hand"><div class="hand"><div class="card back" style="opacity:.12"></div></div><div class="meta"><span class="total-badge">Place a bet to start</span></div></div>`;
+      } else {
+        handsEl.innerHTML = g.hands
+          .map((h, i) => {
+            const active = g.phase === 'player' && i === g.active && g.hands.length > 1;
+            const dim = g.phase === 'player' && g.hands.length > 1 && i !== g.active;
+            const res = this.resultsShown && h.result ? resultTag(h) : '';
+            return `<div class="p-hand ${active ? 'active' : ''} ${dim ? 'dim' : ''}">
+              <div class="hand">${handHTML(h.cards, { animate: this.seen, stagger: 240 })}</div>
+              <div class="meta">${totalBadge(h.cards, { noBJ: h.fromSplit, plain: false })}<span class="bet-chip" style="--chip:${chipColor(h.bet)}">${shortAmt(h.bet)}</span>${h.doubled ? '<span class="result-tag">Doubled</span>' : ''}${res}</div>
+            </div>`;
+          })
+          .join('');
+      }
+      for (const c of g.dealer.slice(0, this.dealerShown)) this.seen.add(c.id);
+      for (const h of g.hands) for (const c of h.cards) this.seen.add(c.id);
+
+      let msg = '';
+      if (g.phase === 'insurance') msg = BJ.handInfo(g.hands[0].cards).blackjack ? 'You have blackjack. Dealer shows an Ace.' : 'Dealer shows an Ace';
+      else if (g.phase === 'player' && g.hands.length > 1) msg = `Playing hand ${g.active + 1} of ${g.hands.length}`;
+      else if (g.phase === 'player') msg = 'Your move';
+      else if (this.resultsShown) {
+        const n = g.roundNet;
+        const dealerBJ = BJ.handInfo(g.dealer).blackjack;
+        const notes = [];
+        if (dealerBJ) notes.push('Dealer blackjack');
+        if (g.insurance) notes.push(dealerBJ ? 'insurance paid 2:1' : `insurance lost ${money(g.insurance)}`);
+        const res = n > 0 ? `You win ${money(n)}` : n < 0 ? `You lose ${money(-n)}` : 'Push: you broke even';
+        msg = notes.length ? `${notes.join(', ')} · ${res}` : res;
+        if (g.bankroll < g.rules.minBet) msg += ' · Out of chips: reset your bankroll';
+      } else if (this.busy && this.holeShown) msg = 'Dealer plays';
+      this.r('msg').innerHTML = msg ? `<span>${msg}</span>` : '';
+
+      const shoe = g.shoe;
+      const used = shoe.pos / shoe.total;
+      this.r('shoe').innerHTML = `<span>Shoe · ${shoe.remaining} cards left</span><div class="progress"><span style="width:${(1 - used) * 100}%"></span></div><span class="dim">Cut card at ${Math.round(shoe.penetration * 100)}%</span>`;
+    },
+
+    renderControls() {
+      const g = this.game;
+      const betting = this.isBetting;
+      const ins = g.phase === 'insurance' && !this.busy;
+      const playing = g.phase === 'player';
+      this.r('betting').classList.toggle('hidden', !betting);
+      this.r('insurance').classList.toggle('hidden', !ins);
+      this.r('actions').classList.toggle('hidden', !playing);
+
+      if (betting) {
+        const broke = g.bankroll < g.rules.minBet;
+        this.r('betting').innerHTML = broke
+          ? `<div class="bet-row" style="flex-direction:column"><b style="font-size:20px">You're out of chips.</b><p class="muted">Variance happens, even with perfect strategy. Reset your bankroll in the House rules panel.</p></div>`
+          : `<div class="bet-row">${CHIPS.map((c, i) => `<button class="chip-btn" data-chip="${c.v}" style="--chip:${c.color}" ${c.v > g.bankroll - this.bet ? 'disabled' : ''} title="Add ${money(c.v)} (key ${i + 1})">${c.v}</button>`).join('')}</div>
+             <div class="bet-row" style="margin-top:14px">
+               <button class="btn sm ghost" data-do="clear" ${this.bet ? '' : 'disabled'}>Clear</button>
+               <div class="bet-display"><span class="muted" style="font-size:13px">Bet</span><br><b>${money(this.bet)}</b></div>
+               <button class="btn primary lg" data-do="deal" ${this.bet || this.lastBet <= g.bankroll ? '' : 'disabled'}>${this.resultsShown ? 'Deal again' : 'Deal'}<kbd>Enter</kbd></button>
+             </div>`;
+      }
+      if (ins) {
+        const bj = BJ.handInfo(g.hands[0].cards).blackjack;
+        const cost = g.hands[0].bet / 2;
+        this.r('insurance').innerHTML = `<div class="panel insurance-ask"><b>${bj ? 'Even money?' : `Insurance for ${money(cost)}?`}</b>
+          <button class="btn primary" data-ins="no">No thanks<kbd>N</kbd></button>
+          <button class="btn" data-ins="yes" ${cost > g.bankroll ? 'disabled' : ''}>${bj ? 'Take even money' : 'Take insurance'}<kbd>Y</kbd></button></div>`;
+      }
+      if (playing) {
+        const avail = this.busy ? { H: 0, S: 0, D: 0, P: 0, R: 0 } : g.available();
+        this.bar.set(avail);
+        this.bar.clearMarks();
+        if (BJ.Stats.data.settings.coach === 'hints' && !this.busy) {
+          const rec = BJ.decide(g.hand.cards, g.up.v, g.strategyContext());
+          this.bar.hint(rec.action);
+          const hintKey = `${g.hands.length}:${g.active}:${g.hand.cards.length}`;
+          if (!this.coachMsg || this.coachMsg.hintKey !== hintKey) {
+            const exp = BJ.explain(rec);
+            this.coachMsg = { ok: true, hint: true, hintKey, title: `Coach suggests: ${BJ.ACTIONS[rec.action].name}`, sub: exp.headline, why: exp.why, prev: this.coachMsg && !this.coachMsg.hint ? this.coachMsg : null };
+          }
+        }
+      }
+    },
+
+    renderSide() {
+      const g = this.game;
+      const s = BJ.Stats.data.settings;
+      // Until the dealer animation finishes, show the bankroll as it was before payouts.
+      const pending = g.phase === 'done' && !this.resultsShown;
+      const shown = pending ? g.preSettle : g.bankroll;
+      this.r('bankroll').textContent = money(shown);
+      const inPlay = g.phase === 'player' || g.phase === 'insurance' || pending ? g.hands.reduce((t, h) => t + h.bet, 0) + g.insurance : 0;
+      const net = shown + inPlay - this.session.start;
+      const sn = this.r('sessnet');
+      sn.textContent = signed(net);
+      sn.style.color = net > 0 ? 'var(--green)' : net < 0 ? 'var(--red)' : '';
+      this.r('sessrounds').textContent = this.session.rounds;
+      this.r('sessacc').textContent = this.session.n ? `${Math.round((this.session.c / this.session.n) * 100)}% (${this.session.c}/${this.session.n})` : '—';
+
+      $$('button', this.r('coachmode')).forEach((b) => b.classList.toggle('on', b.dataset.k === s.coach));
+      this.r('coachdesc').textContent = COACH.find((c) => c[0] === s.coach)[2];
+      const m = this.coachMsg;
+      const coach = this.r('coach');
+      if (!m) coach.innerHTML = `<p class="muted" style="font-size:14px">${s.coach === 'off' ? 'Coach is off.' : 'Make a decision and the coach will check it against the chart.'}</p>`;
+      else {
+        const prev = m.prev ? `<div class="coach-msg ${m.prev.ok ? 'good' : 'bad'}" style="opacity:.7;border-bottom:1px solid var(--line-soft);padding-bottom:8px;margin-bottom:4px"><div class="title">${m.prev.title}</div></div>` : '';
+        coach.className = `coach-msg ${m.hint ? '' : m.ok ? 'good' : 'bad'}`;
+        coach.innerHTML = `${prev}<div class="title">${m.title}</div>${m.sub ? `<div class="muted" style="font-size:13px">${m.sub}</div>` : ''}${m.why ? `<div>${m.why}</div>` : ''}${m.rec && !m.ok ? BJ.ChartUI.decisionRowsHTML(m.rec) : ''}`;
+      }
+      // Phones: the coach panel is below the fold, so echo the verdict on the felt (tap it for the reason).
+      this.r('feltbank').innerHTML = `<span class="dim" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase">Bankroll</span><br><b style="font-size:18px">${money(shown)}</b>`;
+      const fc = this.r('feltcoach');
+      if (!m || s.coach === 'off') fc.innerHTML = '';
+      else if (m.hint) fc.innerHTML = `<span>💡 ${m.title}</span>`;
+      else fc.innerHTML = `<span class="${m.ok ? 'good' : 'bad'}">${m.ok ? '✓' : '✕'} ${m.title}${m.ok ? '' : ' · <u>why?</u>'}</span>`;
+
+      const countEl = this.r('count');
+      const mini = this.r('countmini');
+      if (s.showCount) {
+        const rc = g.visibleCount();
+        const decks = Math.max(0.25, g.shoe.remaining / 52);
+        const tc = rc / decks;
+        countEl.innerHTML = `<div><b>${rc > 0 ? '+' : ''}${rc}</b><span>Running</span></div><div><b>${tc > 0 ? '+' : ''}${tc.toFixed(1)}</b><span>True</span></div><div><b>${decks.toFixed(1)}</b><span>Decks left</span></div>`;
+        mini.innerHTML = `<span>Running count</span><b style="font-size:20px;color:#fff">${rc > 0 ? '+' : ''}${rc}</b><span class="dim">True ${tc > 0 ? '+' : ''}${tc.toFixed(1)}</span>`;
+      } else {
+        countEl.innerHTML = `<p class="muted" style="font-size:13px">Hidden. Practise keeping the count yourself, then switch it on to check. New to counting? Try the Count tab.</p>`;
+        mini.innerHTML = '';
+      }
+    },
+
+    onKey(e) {
+      if (BJ.UI.ignoreKey(e)) return;
+      const g = this.game;
+      const k = e.key.toUpperCase();
+      if (g.phase === 'player' && 'HSDP'.includes(k) && k.length === 1) {
+        e.preventDefault();
+        this.play(k);
+      } else if (g.phase === 'insurance' && (k === 'Y' || k === 'N')) {
+        e.preventDefault();
+        this.insurance(k === 'Y');
+      } else if (this.isBetting) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.deal();
+        } else if (/^[1-4]$/.test(e.key)) this.addChip(CHIPS[+e.key - 1].v);
+        else if (e.key === 'Backspace' || k === 'C') {
+          this.bet = 0;
+          this.renderControls();
+        }
+      }
+    },
+  };
+
+  function insuranceWhy() {
+    return 'Insurance pays 2:1, but only 4 in 13 cards are 10-value. You lose this side bet 9 times out of 13, about −7.7% per bet. Even money is the same bet.';
+  }
+
+  function resultTag(h) {
+    const map = { win: 'Win', blackjack: 'Blackjack', lose: 'Lose', bust: 'Bust', push: 'Push', surrender: 'Surrendered' };
+    const amt = h.net ? ' ' + signed(h.net) : '';
+    return `<span class="result-tag ${h.result}">${map[h.result]}${amt}</span>`;
+  }
+
+  BJ.TableView = TableView;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/count.js */
+/* Count view: Hi-Lo lesson + three counting drills. */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+  const { $, $$, handHTML } = BJ.UI;
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const fmt = (n) => (n > 0 ? '+' + n : String(n));
+
+  const CountView = {
+    init(root) {
+      this.root = root;
+      this.renderHome();
+    },
+    onShow() {},
+    onHide() {
+      this.cancel();
+    },
+    cancel() {
+      this.token = (this.token || 0) + 1;
+      this.keyHandler = null;
+    },
+    renderHome() {
+      this.cancel();
+      const mk = (s) => BJ.makeCard(s.slice(0, -1), s.slice(-1));
+      const row = (list) => `<div class="mini-hand" style="--cw:36px">${list.map((s) => BJ.cardHTML(mk(s))).join('')}</div>`;
+      this.root.innerHTML = `
+        <div class="page-head">
+          <div><div class="eyebrow">The next step</div><h1>Card Counting (Hi-Lo)</h1>
+          <p>Basic strategy gets the house edge down to about 0.5%. Counting tells you when the shoe has turned in your favour. Master the chart first: strategy mistakes cost more than counting earns.</p></div>
+        </div>
+        <div class="lesson-grid">
+          <div class="lesson-card"><h3><span class="ico">＋</span>Low cards: +1</h3>${row(['2♠', '3♥', '4♦', '5♣', '6♠'])}<p>When small cards leave the shoe, what's left is richer in 10s and Aces. That's good for you.</p></div>
+          <div class="lesson-card"><h3><span class="ico">0</span>Neutral: 0</h3>${row(['7♥', '8♣', '9♦'])}<p>Ignore them.</p></div>
+          <div class="lesson-card"><h3><span class="ico">−</span>High cards: −1</h3>${row(['10♠', 'J♥', 'Q♦', 'K♣', 'A♠'])}<p>When 10s and Aces leave the shoe, the odds swing back to the house.</p></div>
+          <div class="lesson-card"><h3><span class="ico">∑</span>Running count</h3><p>Start at 0 after the shuffle. Add each card's tag as it's seen: yours, the dealer's and every other player's. A full deck counts back to exactly 0.</p></div>
+          <div class="lesson-card"><h3><span class="ico">÷</span>True count</h3><p><b>True count = running count ÷ decks left to play.</b> A +6 with 3 decks left is a true +2. With 1 deck left it's a true +6, which is far stronger.</p></div>
+          <div class="lesson-card tip"><h3><span class="ico">💡</span>Why a high count helps you</h3><ul><li>More blackjacks (paid 3:2 to you, but only 1:1 to the dealer)</li><li>Your doubles on 10 and 11 land more often</li><li>The dealer busts stiff hands more often</li></ul><p class="muted">Counters raise their bets as the true count rises. Counting is legal, but casinos can ask you to stop playing.</p></div>
+        </div>
+        <h2 style="font-size:22px;margin:8px 0 14px">Drills</h2>
+        <div class="lesson-grid">
+          <button class="level" data-d="values" style="grid-template-columns:52px 1fr"><div class="level-num">1</div><div><h3>Card values</h3><p>30 cards, as fast as you can: +1, 0 or −1?${BJ.Stats.data.count.valuesBest ? ` · Best ${BJ.Stats.data.count.valuesBest.toFixed(1)}s` : ''}</p></div></button>
+          <button class="level" data-d="run" style="grid-template-columns:52px 1fr"><div class="level-num">2</div><div><h3>Running count</h3><p>Cards flash by. Keep the count in your head, then enter it.${BJ.Stats.data.count.runBest ? ` · Best run: ${BJ.Stats.data.count.runBest} cards` : ''}</p></div></button>
+          <button class="level" data-d="true" style="grid-template-columns:52px 1fr"><div class="level-num">3</div><div><h3>True count</h3><p>Convert running counts to true counts. 10 questions.</p></div></button>
+        </div>`;
+      this.root.querySelector('.lesson-grid:last-of-type').addEventListener('click', (e) => {
+        const b = e.target.closest('[data-d]');
+        if (!b) return;
+        if (b.dataset.d === 'values') this.values();
+        if (b.dataset.d === 'run') this.runSetup();
+        if (b.dataset.d === 'true') this.trueCount();
+      });
+    },
+    shell(title, body) {
+      this.root.innerHTML = `<div class="lesson-head"><button class="btn sm ghost" data-r="back">← Counting</button><span class="eyebrow" style="margin:0">${title}</span></div>${body}`;
+      this.root.querySelector('[data-r="back"]').onclick = () => this.renderHome();
+      window.scrollTo({ top: 0 });
+    },
+
+    // ----- Drill 1: card values -----
+    values() {
+      this.cancel();
+      const N = 30;
+      const shoe = new BJ.Shoe(1, 1);
+      let i = 0;
+      let correct = 0;
+      let t0 = null;
+      let locked = false;
+      this.shell(
+        'Card values',
+        `<div class="trainer"><div class="trainer-bar"><div class="stat-row" data-r="st"></div></div>
+         <div class="felt count-stage" data-r="stage"></div>
+         <div class="hilo-keys" style="margin:0 auto">
+           <button class="act act-D" data-v="1">+1<small>← or 1</small></button>
+           <button class="act act-H" data-v="0">0<small>↓ or 0</small></button>
+           <button class="act act-R" data-v="-1">−1<small>→ or −</small></button>
+         </div></div>`
+      );
+      const stage = this.root.querySelector('[data-r="stage"]');
+      const st = this.root.querySelector('[data-r="st"]');
+      let card;
+      const show = () => {
+        card = shoe.draw();
+        stage.innerHTML = handHTML([card], { animate: true });
+        st.innerHTML = `<span class="stat-pill">Card <b>${i + 1}</b>/${N}</span><span class="stat-pill">Correct <b>${correct}</b></span>`;
+      };
+      const answer = async (v) => {
+        if (locked || i >= N) return;
+        if (t0 === null) t0 = performance.now();
+        const ok = v === BJ.hiLo(card);
+        i++;
+        if (ok) correct++;
+        else {
+          locked = true;
+          stage.insertAdjacentHTML('beforeend', `<div class="ctx-note">${card.rank} counts ${fmt(BJ.hiLo(card))}</div>`);
+          const tok = this.token;
+          await wait(900);
+          if (tok !== this.token) return;
+          locked = false;
+        }
+        if (i >= N) return done();
+        show();
+      };
+      const done = () => {
+        const secs = (performance.now() - t0) / 1000;
+        const acc = correct / N;
+        const c = BJ.Stats.data.count;
+        let note = '';
+        if (acc >= 0.9 && (!c.valuesBest || secs < c.valuesBest)) {
+          c.valuesBest = secs;
+          BJ.Stats.save();
+          note = 'New best time!';
+        }
+        this.keyHandler = (e) => {
+          if (e.key === 'Enter') this.values();
+        };
+        this.root.querySelector('.trainer').innerHTML = BJ.resultsHTML(
+          { n: N, correct, acc, misses: [] },
+          {
+            eyebrow: note || 'Card values',
+            bigText: secs.toFixed(1) + 's',
+            subText: `${correct}/${N} correct · ${(secs / N).toFixed(2)}s per card`,
+            message: acc < 0.9 ? 'Aim for 90%+ accuracy before speed. Best times only count at 90%+.' : 'Strong counters tag a card in well under half a second.',
+            buttons: `<button class="btn primary" data-r="again">Again<kbd>Enter</kbd></button><button class="btn" data-r="home">Back</button>`,
+          }
+        );
+        this.root.querySelector('[data-r="again"]').onclick = () => this.values();
+        this.root.querySelector('[data-r="home"]').onclick = () => this.renderHome();
+      };
+      this.root.querySelector('.hilo-keys').onclick = (e) => {
+        const b = e.target.closest('[data-v]');
+        if (b) answer(+b.dataset.v);
+      };
+      this.keyHandler = (e) => {
+        const map = { ArrowLeft: 1, '1': 1, ArrowDown: 0, '0': 0, ArrowRight: -1, '-': -1 };
+        if (e.key in map) {
+          e.preventDefault();
+          answer(map[e.key]);
+        }
+      };
+      show();
+    },
+
+    // ----- Drill 2: running count -----
+    runSetup() {
+      this.cancel();
+      this.runOpts = this.runOpts || { n: 20, ms: 900 };
+      const o = this.runOpts;
+      const seg = (name, opts, cur) => `<div class="seg" data-g="${name}">${opts.map(([v, l]) => `<button data-v="${v}" class="${v === cur ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+      this.shell(
+        'Running count',
+        `<div class="panel result-card">
+          <div class="big" style="font-size:44px">Keep the count</div>
+          <p class="muted" style="max-width:48ch">Cards appear one at a time. Keep the Hi-Lo running count in your head, then type it in at the end.</p>
+          <div style="display:grid;gap:12px;justify-items:center">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center"><span class="muted">Cards</span>${seg('n', [[10, '10'], [20, '20'], [52, 'Full deck']], o.n)}</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center"><span class="muted">Speed</span>${seg('ms', [[1400, 'Slow'], [900, 'Medium'], [550, 'Fast'], [350, 'Casino']], o.ms)}</div>
+          </div>
+          <button class="btn primary lg" data-r="go">Start<kbd>Enter</kbd></button>
+        </div>`
+      );
+      this.root.querySelectorAll('[data-g]').forEach((g) =>
+        g.addEventListener('click', (e) => {
+          const b = e.target.closest('button');
+          if (!b) return;
+          o[g.dataset.g] = +b.dataset.v;
+          $$('button', g).forEach((x) => x.classList.toggle('on', x === b));
+        })
+      );
+      this.root.querySelector('[data-r="go"]').onclick = () => this.run();
+      this.keyHandler = (e) => {
+        if (e.key === 'Enter') this.run();
+      };
+    },
+    async run() {
+      this.cancel();
+      const tok = this.token;
+      const { n, ms } = this.runOpts;
+      const shoe = new BJ.Shoe(1, 1);
+      const seen = [];
+      this.shell('Running count', `<div class="trainer"><div class="felt count-stage" data-r="stage"></div><div class="progress"><span data-r="p" style="width:0"></span></div></div>`);
+      const stage = this.root.querySelector('[data-r="stage"]');
+      const p = this.root.querySelector('[data-r="p"]');
+      stage.innerHTML = `<div class="big" style="font-size:42px;font-weight:800">Ready…</div>`;
+      await wait(900);
+      for (let i = 0; i < n; i++) {
+        if (tok !== this.token) return;
+        const c = shoe.draw();
+        seen.push(c);
+        stage.innerHTML = handHTML([c], { animate: true });
+        p.style.width = ((i + 1) / n) * 100 + '%';
+        await wait(ms);
+      }
+      if (tok !== this.token) return;
+      const rc = seen.reduce((s, c) => s + BJ.hiLo(c), 0);
+      stage.innerHTML = `<div style="display:grid;gap:14px;justify-items:center"><b style="font-size:22px">What's the running count?</b>
+        <form class="count-input" data-r="f"><input type="number" inputmode="numeric" step="1" data-r="in" placeholder="0" autocomplete="off"><button class="btn primary lg">Check</button></form></div>`;
+      const input = stage.querySelector('[data-r="in"]');
+      input.focus();
+      stage.querySelector('[data-r="f"]').onsubmit = (e) => {
+        e.preventDefault();
+        const guess = parseInt(input.value || '0', 10);
+        const ok = guess === rc;
+        const c = BJ.Stats.data.count;
+        if (ok && n > (c.runBest || 0) && ms <= 900) {
+          c.runBest = n;
+          BJ.Stats.save();
+        }
+        const list = seen
+          .map((cd) => `<div style="display:grid;justify-items:center;gap:4px;--cw:34px">${BJ.cardHTML(cd)}<span style="font-size:12px;color:${BJ.hiLo(cd) > 0 ? 'var(--green)' : BJ.hiLo(cd) < 0 ? 'var(--rose)' : 'var(--muted)'}">${fmt(BJ.hiLo(cd))}</span></div>`)
+          .join('');
+        this.root.querySelector('.trainer').innerHTML = `<div class="panel result-card">
+          <div class="eyebrow">${ok ? 'Spot on' : 'Not quite'}</div>
+          <div class="big" style="color:${ok ? 'var(--green)' : 'var(--red)'}">${fmt(rc)}</div>
+          <p class="muted">${ok ? `You kept the count through ${n} cards.` : `You said ${fmt(guess)}. The count was ${fmt(rc)}.`}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:760px">${list}</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn primary" data-r="again">Again<kbd>Enter</kbd></button><button class="btn" data-r="setup">Change settings</button></div>
+        </div>`;
+        this.root.querySelector('[data-r="again"]').onclick = () => this.run();
+        this.root.querySelector('[data-r="setup"]').onclick = () => this.runSetup();
+        this.keyHandler = (ev) => {
+          if (ev.key === 'Enter') this.run();
+        };
+      };
+    },
+
+    // ----- Drill 3: true count -----
+    trueCount() {
+      this.cancel();
+      const N = 10;
+      let i = 0;
+      let correct = 0;
+      const decksList = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+      const roundSym = (x) => Math.sign(x) * Math.round(Math.abs(x));
+      this.shell('True count', `<div class="trainer" data-r="t"></div>`);
+      const box = this.root.querySelector('[data-r="t"]');
+      const ask = () => {
+        if (i >= N) {
+          box.innerHTML = BJ.resultsHTML(
+            { n: N, correct, acc: correct / N, misses: [] },
+            { eyebrow: 'True count', buttons: `<button class="btn primary" data-r="again">Again</button><button class="btn" data-r="home">Back</button>` }
+          );
+          box.querySelector('[data-r="again"]').onclick = () => this.trueCount();
+          box.querySelector('[data-r="home"]').onclick = () => this.renderHome();
+          return;
+        }
+        let rc, decks, exact;
+        do {
+          rc = BJ.rand(25) - 12;
+          decks = BJ.pick(decksList);
+          exact = rc / decks;
+        } while (rc === 0 || Math.abs(Math.abs(exact % 1) - 0.5) < 0.05);
+        const ans = roundSym(exact);
+        const opts = new Set([ans]);
+        for (const d of BJ.pick([[-1, 1, 2], [-2, -1, 1], [1, 2, 3], [-1, -2, -3]])) opts.add(ans + d);
+        const list = Array.from(opts).sort((a, b) => a - b);
+        box.innerHTML = `<div class="trainer-bar"><div class="stat-row"><span class="stat-pill">Question <b>${i + 1}</b>/${N}</span><span class="stat-pill">Correct <b>${correct}</b></span></div></div>
+          <div class="felt count-stage" style="min-height:220px"><div style="text-align:center;display:grid;gap:10px">
+            <div class="seat-label">Running count</div><div style="font-size:54px;font-weight:800;line-height:1">${fmt(rc)}</div>
+            <div class="seat-label" style="margin-top:8px">Decks left to play</div><div style="font-size:34px;font-weight:700;line-height:1">${decks}</div>
+          </div></div>
+          <p class="muted" style="text-align:center">True count = running ÷ decks left. Round to the nearest whole number.</p>
+          <div class="choice-grid" style="grid-template-columns:repeat(4,1fr)">${list.map((v) => `<button class="choice" data-v="${v}">${fmt(v)}</button>`).join('')}</div>
+          <div data-r="fb"></div>`;
+        box.querySelector('.choice-grid').onclick = (e) => {
+          const b = e.target.closest('.choice');
+          if (!b || b.disabled) return;
+          const ok = +b.dataset.v === ans;
+          if (ok) correct++;
+          i++;
+          $$('.choice', box).forEach((x) => {
+            x.disabled = true;
+            if (+x.dataset.v === ans) x.classList.add('right');
+            else if (x === b) x.classList.add('wrong');
+          });
+          box.querySelector('[data-r="fb"]').innerHTML = `<div class="feedback ${ok ? '' : 'bad'}"><div class="fb-head"><div class="fb-icon">${ok ? '✓' : '✕'}</div><div><div class="fb-title">${fmt(rc)} ÷ ${decks} = ${exact.toFixed(2)} → true count ${fmt(ans)}</div></div></div><div class="fb-foot"><span></span><button class="btn primary" data-r="next">Next<kbd>Enter</kbd></button></div></div>`;
+          box.querySelector('[data-r="next"]').onclick = ask;
+          this.keyHandler = (ev) => {
+            if (ev.key === 'Enter' || ev.key === ' ') {
+              ev.preventDefault();
+              this.keyHandler = null;
+              ask();
+            }
+          };
+        };
+        this.keyHandler = null;
+      };
+      ask();
+    },
+
+    onKey(e) {
+      if (this.keyHandler && !(e.target && e.target.tagName === 'INPUT')) this.keyHandler(e);
+    },
+  };
+
+  BJ.CountView = CountView;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/progress.js */
+/* Progress view: accuracy by section, most-missed hands, recent mistakes. */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+  const { $, handHTML, pct, money, signed } = BJ.UI;
+
+  const SECTIONS = [
+    ['hard', 'Hard totals'],
+    ['soft', 'Soft totals'],
+    ['pairs', 'Pairs'],
+    ['insurance', 'Insurance'],
+  ];
+
+  const ProgressView = {
+    init(root) {
+      this.root = root;
+    },
+    onShow() {
+      this.render();
+    },
+    render() {
+      const d = BJ.Stats.data;
+      const acc = BJ.Stats.acc(d.total);
+      const passed = BJ.LEVELS.filter((l) => (d.levels[l.id] || {}).stars >= 1).length;
+      const bars = SECTIONS.map(([k, label]) => {
+        const s = d.tables[k];
+        const a = BJ.Stats.acc(s);
+        const color = a == null ? 'var(--panel-3)' : a >= 0.95 ? 'var(--green)' : a >= 0.8 ? 'var(--yellow)' : 'var(--red)';
+        return `<div class="cat-bar"><span>${label}</span><div class="progress"><span style="width:${a == null ? 0 : a * 100}%;background:${color}"></span></div><b style="text-align:right">${pct(a)}<span class="dim" style="font-weight:400;font-size:12px"> ${s ? s.n : 0}</span></b></div>`;
+      }).join('');
+
+      // Most-missed cells
+      const cells = Object.entries(d.cells)
+        .map(([key, s]) => ({ key, ...s, miss: s.n - s.c }))
+        .filter((x) => x.miss > 0 && BJ.ChartUI.TITLES[x.key.split(':')[0]])
+        .sort((a, b) => b.miss - a.miss || a.c / a.n - b.c / b.n)
+        .slice(0, 8);
+      const missRows = cells
+        .map((x) => {
+          const [kind, row, up] = x.key.split(':');
+          const r = +row;
+          const u = +up;
+          if (!BJ.ChartUI.TITLES[kind] || (kind === 'soft' && (r < 13 || r > 20))) return '';
+          const cards = BJ.ChartUI.exampleCards(kind, r);
+          const rec = BJ.decide(cards, u === 11 ? 1 : u, { canDouble: true, canSplit: true, canSurrender: false, das: d.settings.das });
+          return `<div class="miss">
+            <div><b>${BJ.ChartUI.rowLabel(kind, r)}</b> <span class="muted">vs</span> <b>${BJ.upLabel(u)}</b><div class="muted" style="font-size:12px">${BJ.ChartUI.TITLES[kind]}</div></div>
+            <div class="muted" style="font-size:13px">${x.c}/${x.n} correct · missed ${x.miss}×</div>
+            <div style="display:flex;gap:8px;align-items:center">${BJ.UI.actionTag(rec.action)}<button class="btn sm" data-cell="${x.key}">Drill</button></div>
+          </div>`;
+        })
+        .join('');
+
+      const recent = d.mistakes
+        .slice(0, 8)
+        .map((m) => {
+          const cards = m.cards.map(([r, s]) => BJ.makeCard(r, s));
+          return `<div class="miss"><div class="mini-hand">${handHTML(cards)}</div>
+            <div>${BJ.describeHand(cards)} vs <b>${BJ.upLabel(m.up)}</b><div class="muted" style="font-size:12px">You chose ${BJ.ACTIONS[m.chosen].name} · ${m.source || 'drill'}</div></div>
+            ${BJ.UI.actionTag(m.best)}</div>`;
+        })
+        .join('');
+
+      const t = d.table;
+      this.root.innerHTML = `
+        <div class="page-head">
+          <div><div class="eyebrow">Your progress</div><h1>Progress</h1><p>Every decision you make in lessons, drills and at the table is tracked here, down to the single chart cell.</p></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn primary" data-go="weak">Drill my weak spots</button><button class="btn" data-go="heat">See accuracy heatmap</button></div>
+        </div>
+        <div class="stats-grid">
+          <div class="kpi"><span class="k">Decisions</span><span class="v">${d.total.n.toLocaleString()}</span></div>
+          <div class="kpi"><span class="k">Accuracy</span><span class="v">${pct(acc)}</span></div>
+          <div class="kpi"><span class="k">Lessons passed</span><span class="v">${passed}<small>/${BJ.LEVELS.length}</small></span></div>
+          <div class="kpi"><span class="k">Best streak · speed</span><span class="v">${d.bestStreak}<small> · ${d.speedBest}</small></span></div>
+        </div>
+        <div class="two-col">
+          <div style="display:grid;gap:18px">
+            <div class="panel"><h4 class="eyebrow" style="color:var(--muted)">Accuracy by chart section</h4><div class="cat-bars">${bars}</div></div>
+            <div class="panel"><h4 class="eyebrow" style="color:var(--muted)">At the table</h4>
+              <div class="kv"><span>Bankroll</span><b>${money(t.bankroll)}</b></div>
+              <div class="kv"><span>Rounds played</span><b>${t.rounds.toLocaleString()}</b></div>
+              <div class="kv"><span>All-time result</span><b style="color:${t.net > 0 ? 'var(--green)' : t.net < 0 ? 'var(--red)' : ''}">${signed(t.net)}</b></div>
+              <div class="kv"><span>Strategy accuracy at the table</span><b>${pct(BJ.Stats.acc(t))}</b></div>
+              <p class="muted" style="font-size:13px;margin-top:8px">Short-term results swing a lot, even with perfect play. Judge yourself on accuracy, not on wins.</p>
+            </div>
+          </div>
+          <div style="display:grid;gap:18px">
+            <div class="panel"><h4 class="eyebrow" style="color:var(--muted)">Most-missed hands</h4><div class="miss-list" style="max-width:none">${missRows || '<p class="muted">No misses yet. Go make some decisions!</p>'}</div></div>
+            <div class="panel"><h4 class="eyebrow" style="color:var(--muted)">Recent mistakes</h4><div class="miss-list" style="max-width:none">${recent || '<p class="muted">Nothing here yet.</p>'}</div></div>
+          </div>
+        </div>
+        <div style="margin-top:28px;text-align:center"><button class="btn sm ghost" data-go="reset">Reset all progress</button></div>`;
+
+      this.root.onclick = (e) => {
+        const c = e.target.closest('[data-cell]');
+        if (c) {
+          const [kind, row, up] = c.dataset.cell.split(':');
+          return BJ.App.go('drill', { cell: { kind, row: +row, up: +up } });
+        }
+        const g = e.target.closest('[data-go]');
+        if (!g) return;
+        if (g.dataset.go === 'weak') BJ.App.go('drill', { filter: 'weak' });
+        if (g.dataset.go === 'heat') {
+          BJ.ChartView.mode = 'heat';
+          BJ.App.go('chart');
+        }
+        if (g.dataset.go === 'reset' && confirm('Reset all lessons, stats and your bankroll? This cannot be undone.')) {
+          BJ.Stats.reset();
+          if (BJ.TableView.game) {
+            BJ.TableView.game.bankroll = 1000;
+            BJ.TableView.session.start = 1000;
+          }
+          this.render();
+          BJ.UI.toast('Progress reset');
+        }
+      };
+    },
+  };
+
+  BJ.ProgressView = ProgressView;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+  <script>/* js/app.js */
+/* Router: hash-based views, keyboard dispatch. */
+(function (G) {
+  'use strict';
+  const BJ = G.BJ;
+
+  const VIEWS = {
+    learn: BJ.LearnView,
+    drill: BJ.DrillView,
+    table: BJ.TableView,
+    chart: BJ.ChartView,
+    count: BJ.CountView,
+    progress: BJ.ProgressView,
+  };
+  const inited = new Set();
+  let current = null;
+  let pendingParams = null;
+
+  function show(name, params) {
+    if (!VIEWS[name]) name = 'learn';
+    const view = VIEWS[name];
+    if (current && current !== name && VIEWS[current].onHide) VIEWS[current].onHide();
+    document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === 'view-' + name));
+    document.querySelectorAll('.tabs a').forEach((a) => a.classList.toggle('active', a.dataset.view === name));
+    const root = document.getElementById('view-' + name);
+    if (!inited.has(name)) {
+      view.init(root);
+      inited.add(name);
+    }
+    const changed = current !== name;
+    current = name;
+    if (view.onShow) view.onShow(params || null);
+    if (changed) window.scrollTo({ top: 0 });
+  }
+
+  function route() {
+    const name = (location.hash || '#learn').slice(1);
+    const params = pendingParams;
+    pendingParams = null;
+    show(name, params);
+  }
+
+  BJ.App = {
+    go(name, params) {
+      pendingParams = params || null;
+      if (location.hash === '#' + name) route();
+      else location.hash = name;
+    },
+  };
+
+  // Clicking the active tab returns that view to its start (e.g. the lesson list).
+  document.querySelector('.tabs').addEventListener('click', (e) => {
+    const a = e.target.closest('a[data-view]');
+    if (a && a.dataset.view === current && current === 'learn') BJ.LearnView.renderList();
+    if (a && a.dataset.view === current && current === 'count') BJ.CountView.renderHome();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const v = current && VIEWS[current];
+    if (v && v.onKey) v.onKey(e);
+  });
+
+  window.addEventListener('hashchange', route);
+  route();
+
+  // Offline support for the hosted (https) version. Skipped for local files and local testing.
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+})(window);
+
+</script>
+</body>
+</html>
